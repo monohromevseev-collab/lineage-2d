@@ -1,5 +1,5 @@
 extends Node2D
-## Layered ¾ isometric Human Fighter. Gear tiers visibly recolor / reshape layers.
+## Layered ¾ Human Fighter with idle / walk bob and gear-driven layers.
 
 @onready var shadow: Polygon2D = $Shadow
 @onready var legs: Polygon2D = $Legs
@@ -11,11 +11,9 @@ extends Node2D
 @onready var weapon: Polygon2D = $Weapon
 @onready var accent: Polygon2D = $Accent
 
-## Human skin / hair palette (readable vs gear).
 const SKIN := Color(0.93, 0.78, 0.62)
 const SKIN_SHADE := Color(0.82, 0.62, 0.48)
 const HAIR := Color(0.35, 0.22, 0.12)
-
 const LINEN := Color(0.78, 0.72, 0.58)
 const LINEN_DARK := Color(0.62, 0.56, 0.42)
 const BRONZE := Color(0.72, 0.48, 0.22)
@@ -26,21 +24,50 @@ const STEEL_EDGE := Color(0.78, 0.86, 0.95)
 
 var _facing: float = 1.0
 var _attack_flash: float = 0.0
+var moving: bool = false
+var _anim_t: float = 0.0
+var _base_leg_y: float = 0.0
+var _base_arm_y: float = 0.0
+var _base_torso_y: float = 0.0
 
 
 func _ready() -> void:
 	_build_base_shapes()
 	apply_gear({})
+	_base_leg_y = legs.position.y
+	_base_arm_y = arms.position.y
+	_base_torso_y = torso.position.y
 
 
 func _process(delta: float) -> void:
+	_anim_t += delta * (9.0 if moving else 2.2)
+	var bob := sin(_anim_t) * (3.2 if moving else 1.1)
+	var sway := cos(_anim_t * 0.5) * (0.08 if moving else 0.02)
+	legs.position.y = _base_leg_y + bob * 0.35
+	torso.position.y = _base_torso_y + bob
+	arms.position.y = _base_arm_y + bob * 0.7
+	head.position.y = bob * 0.9
+	hair.position.y = bob * 0.9
+	helm.position.y = bob * 0.9
+	accent.position.y = bob
+	if moving:
+		legs.rotation = sin(_anim_t) * 0.18
+		arms.rotation = -sin(_anim_t) * 0.22
+	else:
+		legs.rotation = lerp_angle(legs.rotation, 0.0, 8.0 * delta)
+		arms.rotation = lerp_angle(arms.rotation, sway, 6.0 * delta)
+
 	if _attack_flash > 0.0:
 		_attack_flash = maxf(0.0, _attack_flash - delta * 3.0)
-		weapon.rotation = -0.55 * _attack_flash * _facing
+		weapon.rotation = -0.7 * _attack_flash
 		modulate = Color(1, 1, 1).lerp(Color(1.25, 1.1, 0.85), _attack_flash)
 	else:
-		weapon.rotation = -0.15 * _facing
+		weapon.rotation = -0.12 + (sin(_anim_t) * 0.08 if moving else 0.0)
 		modulate = Color(1, 1, 1)
+
+
+func set_moving(is_moving: bool) -> void:
+	moving = is_moving
 
 
 func play_attack_flash() -> void:
@@ -61,12 +88,10 @@ func apply_gear(equipped: Dictionary) -> void:
 	var head_k := _visual_key(Items, equipped, Items.SLOT_HEAD, "head", "cloth")
 	var weap := _visual_key(Items, equipped, Items.SLOT_WEAPON, "weapon", "wood_blade")
 	var tier := _max_tier(Items, equipped)
-
 	_style_legs(legs_k)
 	_style_chest(chest)
 	_style_head(head_k)
 	_style_weapon(weap)
-	# Shoulder accent plate only on steel tier for a clear “upgraded” read.
 	accent.visible = tier >= 2
 	if accent.visible:
 		accent.color = STEEL_EDGE
@@ -166,7 +191,6 @@ func _style_head(kind: String) -> void:
 			helm.color = BRONZE
 			helm.polygon = PackedVector2Array([
 				Vector2(-11, -32), Vector2(11, -32), Vector2(13, -18), Vector2(0, -14), Vector2(-13, -18),
-				Vector2(-8, -26), Vector2(8, -26),
 			])
 		"steel":
 			helm.visible = true

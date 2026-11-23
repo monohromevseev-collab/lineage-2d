@@ -1,95 +1,76 @@
 # Lineage 2d
 
-2D multiplayer prototype inspired by Lineage 2 (High Five chronicle).  
+2D multiplayer prototype inspired by Lineage 2 (High Five).  
 Engine: **Godot 4.3** · authoritative dedicated server (ENet).
 
-## Slice 1 (current)
+## Slice 2 (current)
 
-- Headless dedicated server + desktop clients
-- Human Fighter spawn at a **talking stone** meadow
-- Layered ¾ character (body / armor / helm / weapon) — gear swaps change the look
-- Mobs with distinct silhouettes (Keltir, Wolf, Orc Grunt), target + auto-attack, HP bars
-- XP / level-up, loot drops, pickup, equip (stats + visuals update)
-- Server validates movement, damage, loot, and equipment
+- L2-style HUD: **CP / HP / MP / XP** bars, target frame, skill bar, inventory with item icons
+- **Target combat**: LMB or Tab to select → **F / Attack skill** to engage; server checks range + facing
+- Expanded **seamless meadow** (soft far bounds), talking stone spawn, **minimap + full map (M)**
+- Walk / idle bob animations for player and mobs
+- Layered gear still changes appearance on equip
 
 ## Requirements
 
-- [Godot 4.3+](https://godotengine.org/download) (standard build; `--headless` works on the same binary)
+- [Godot 4.3+](https://godotengine.org/download)
 - Linux / macOS / Windows
 
 ## Controls
 
 | Input | Action |
 |-------|--------|
-| WASD / arrows | Move |
-| F / Space / LMB | Start auto-attack (nearest / targeted mob) |
+| WASD / arrows | Move (walk anim) |
+| LMB | Select mob under cursor (empty ground clears target) |
 | Tab | Cycle target |
+| F / Space / Attack skill (bar) | Toggle engage on **current target** |
+| Esc | Clear target / stop attack |
 | E | Pick up nearest loot |
+| I / Bag button | Inventory (click item icons to equip) |
+| M / Map button | Full map |
 | R | Equip best upgrades from bag |
 | 1–4 | Equip first bag item into weapon / chest / legs / head |
 
-## Run locally (server + client)
-
-From the repo root (directory that contains `project.godot`):
-
-**Terminal 1 — dedicated server (headless):**
+## Run locally
 
 ```bash
 godot --path . --headless -- --server --port 7777
-```
-
-**Terminal 2 — client:**
-
-```bash
 godot --path . --rendering-driver opengl3 -- --client --host 127.0.0.1 --port 7777 --name Alice
 ```
 
-Optional second client:
-
-```bash
-godot --path . --rendering-driver opengl3 -- --client --host 127.0.0.1 --port 7777 --name Bob
-```
-
-> If Vulkan init fails (common on VMs/CI), keep `--rendering-driver opengl3`. The project defaults to the GL Compatibility renderer.
+> Keep `--rendering-driver opengl3` on VMs without Vulkan. Project defaults to GL Compatibility.
 
 ### CLI flags (after `--`)
 
 | Flag | Meaning |
 |------|---------|
-| `--server` | Run as dedicated server |
-| `--client` | Run as client (default) |
-| `--host <ip>` | Server address (default `127.0.0.1`) |
-| `--port <n>` | Port (default `7777`) |
-| `--name <str>` | Display name above the avatar |
-| `--bot` | Auto-hunt / loot / equip (smoke tests) |
+| `--server` / `--client` | Role |
+| `--host` / `--port` | Connect |
+| `--name` | Display name |
+| `--bot` | Auto hunt smoke test |
 
-**Headless smoke test:**
+## Suggested loop
 
-```bash
-godot --path . --headless -- --server --port 7777 &
-godot --path . --headless -- --client --name Alice --bot &
-```
+1. Spawn at the glowing **talking stone** (linen starter).
+2. Open minimap (top-right); walk the paths east to Keltirs.
+3. **Click** a Keltir → press **F** to engage → watch target frame + CP/HP.
+4. **E** loot → **I** open bag → click icon to equip → armor layers update.
+5. **M** for full map of the meadow.
 
-### Suggested play loop
-
-1. Spawn at the glowing talking stone (linen starter set).
-2. Walk east to Keltirs — press **F** to auto-attack.
-3. On kill, grab glowing loot with **E**, then **R** to equip bronze/steel upgrades.
-4. Watch P.Atk / P.Def and armor layers change; push into Wolves / Orc Grunts.
-
-## Project layout
+## Layout
 
 ```
-data/            items, mobs, combat formulas
-scenes/          bootstrap, world, player, mob, loot, character visual
-scripts/         net + authoritative simulation + layered visuals
+data/            items, mobs, combat
+scenes/          world, player, mob, loot, character visual
+scripts/         simulation + ui/
 project.godot
 ```
 
 ## Slice history
 
-- **0** — server + 2 clients, shared zone, move
-- **1** — combat, XP, loot, equip, layered Human gear
+- **0** — multiplayer move
+- **1** — combat / XP / loot / layered gear
+- **2** — HUD, target combat, seamless map, minimap, walk anims
 
 ## License
 

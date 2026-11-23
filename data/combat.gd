@@ -37,6 +37,7 @@ static func derived_stats(base: Dictionary, level: int, gear: Dictionary) -> Dic
 	var str_v: int = int(base.get("str", 40)) + (level - 1) * 2
 	var dex_v: int = int(base.get("dex", 30)) + (level - 1)
 	var con_v: int = int(base.get("con", 43)) + (level - 1) * 2
+	var men_v: int = int(base.get("men", 25)) + (level - 1)
 
 	var weapon_patk := 0
 	var armor_pdef := 0
@@ -49,6 +50,8 @@ static func derived_stats(base: Dictionary, level: int, gear: Dictionary) -> Dic
 		armor_pdef += int(it.get("p_def", 0))
 
 	var max_hp := 80 + con_v * 4 + level * 18
+	var max_mp := 40 + men_v * 3 + level * 8
+	var max_cp := 40 + con_v * 2 + level * 10
 	var p_atk := 4 + int(str_v * 0.55) + weapon_patk
 	var p_def := 3 + int(con_v * 0.25) + armor_pdef
 	var accuracy := 20.0 + dex_v * 0.6 + level
@@ -60,7 +63,10 @@ static func derived_stats(base: Dictionary, level: int, gear: Dictionary) -> Dic
 		"str": str_v,
 		"dex": dex_v,
 		"con": con_v,
+		"men": men_v,
 		"max_hp": max_hp,
+		"max_mp": max_mp,
+		"max_cp": max_cp,
 		"p_atk": p_atk,
 		"p_def": p_def,
 		"accuracy": accuracy,
@@ -70,3 +76,20 @@ static func derived_stats(base: Dictionary, level: int, gear: Dictionary) -> Dic
 		"weapon_patk": weapon_patk,
 		"armor_pdef": armor_pdef,
 	}
+
+
+## Require roughly facing the target (dot > ~0.15) and within range.
+static func can_melee(attacker_pos: Vector2, facing: Vector2, target_pos: Vector2, range_px: float) -> Dictionary:
+	var to := target_pos - attacker_pos
+	var dist := to.length()
+	if dist > range_px:
+		return {"ok": false, "reason": "range"}
+	var face := facing
+	if face.length_squared() < 0.01:
+		face = to.normalized()
+	else:
+		face = face.normalized()
+	var dir := to.normalized()
+	if face.dot(dir) < 0.15:
+		return {"ok": false, "reason": "facing"}
+	return {"ok": true, "reason": ""}
