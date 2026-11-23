@@ -99,7 +99,8 @@ func poll_input(delta: float) -> Dictionary:
 	var equip_slot := ""
 	if bot_mode:
 		_bot_phase += delta
-		var hunt := Vector2(220, 40)
+		# TI HF pocket: Elpy / Bearded Keltir near talking stone (projected spawns).
+		var hunt := Vector2(-20, 120)
 		var to_hunt := hunt - position
 		if to_hunt.length() > 48.0:
 			dir = to_hunt.normalized()
@@ -319,7 +320,7 @@ func _server_equip_item_id(item_id: String) -> void:
 		return
 	var it: Dictionary = Items.get_item(item_id)
 	var slot: String = str(it.get("slot", ""))
-	if slot == "":
+	if slot == "" or slot == "etc":
 		return
 	_swap_equip(slot, item_id, idx)
 
@@ -337,7 +338,7 @@ func _server_try_equip(slot_or_auto: String) -> void:
 
 
 func _equip_best_from_inventory() -> void:
-	for slot in [Items.SLOT_WEAPON, Items.SLOT_CHEST, Items.SLOT_LEGS, Items.SLOT_HEAD]:
+	for slot in [Items.SLOT_WEAPON, Items.SLOT_CHEST, Items.SLOT_LEGS, Items.SLOT_HEAD, Items.SLOT_GLOVES, Items.SLOT_FEET]:
 		var best_i := -1
 		var best_score := -1
 		for i in range(inventory.size()):

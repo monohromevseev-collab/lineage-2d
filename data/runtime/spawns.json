@@ -1,0 +1,247 @@
+{
+  "spawns": [
+    {
+      "npc_id": "20481",
+      "pos": {
+        "x": 286.9,
+        "y": 465.6
+      },
+      "l2": {
+        "x": -74661,
+        "y": 256302,
+        "z": -3128
+      },
+      "projection_status": "unconfirmed"
+    },
+    {
+      "npc_id": "20481",
+      "pos": {
+        "x": 31.9,
+        "y": 150.4
+      },
+      "l2": {
+        "x": -81945,
+        "y": 247298,
+        "z": -3640
+      },
+      "projection_status": "unconfirmed"
+    },
+    {
+      "npc_id": "20481",
+      "pos": {
+        "x": -273.2,
+        "y": -64.9
+      },
+      "l2": {
+        "x": -90663,
+        "y": 241147,
+        "z": -3504
+      },
+      "projection_status": "unconfirmed"
+    },
+    {
+      "npc_id": "20432",
+      "pos": {
+        "x": 92.5,
+        "y": 112.6
+      },
+      "l2": {
+        "x": -80215,
+        "y": 246216,
+        "z": -3720
+      },
+      "projection_status": "unconfirmed"
+    },
+    {
+      "npc_id": "20432",
+      "pos": {
+        "x": 26.5,
+        "y": 168.7
+      },
+      "l2": {
+        "x": -82100,
+        "y": 247820,
+        "z": -3648
+      },
+      "projection_status": "unconfirmed"
+    },
+    {
+      "npc_id": "20432",
+      "pos": {
+        "x": -20.3,
+        "y": -119.8
+      },
+      "l2": {
+        "x": -83436,
+        "y": 239577,
+        "z": -3720
+      },
+      "projection_status": "unconfirmed"
+    },
+    {
+      "npc_id": "20544",
+      "pos": {
+        "x": 41.1,
+        "y": 197.4
+      },
+      "l2": {
+        "x": -81683,
+        "y": 248641,
+        "z": -3696
+      },
+      "projection_status": "unconfirmed"
+    },
+    {
+      "npc_id": "20544",
+      "pos": {
+        "x": -3.2,
+        "y": -126.6
+      },
+      "l2": {
+        "x": -82949,
+        "y": 239382,
+        "z": -3704
+      },
+      "projection_status": "unconfirmed"
+    },
+    {
+      "npc_id": "20544",
+      "pos": {
+        "x": -293.7,
+        "y": 43.0
+      },
+      "l2": {
+        "x": -91248,
+        "y": 244230,
+        "z": -3504
+      },
+      "projection_status": "unconfirmed"
+    },
+    {
+      "npc_id": "20120",
+      "pos": {
+        "x": 18.2,
+        "y": 240.4
+      },
+      "l2": {
+        "x": -82338,
+        "y": 249868,
+        "z": -3648
+      },
+      "projection_status": "unconfirmed"
+    },
+    {
+      "npc_id": "20120",
+      "pos": {
+        "x": -242.9,
+        "y": -46.4
+      },
+      "l2": {
+        "x": -89796,
+        "y": 241674,
+        "z": -3568
+      },
+      "projection_status": "unconfirmed"
+    },
+    {
+      "npc_id": "20120",
+      "pos": {
+        "x": -357.2,
+        "y": -254.9
+      },
+      "l2": {
+        "x": -93064,
+        "y": 235717,
+        "z": -3688
+      },
+      "projection_status": "unconfirmed"
+    },
+    {
+      "npc_id": "20130",
+      "pos": {
+        "x": -345.2,
+        "y": -89.4
+      },
+      "l2": {
+        "x": -92721,
+        "y": 240446,
+        "z": -3408
+      },
+      "projection_status": "unconfirmed"
+    },
+    {
+      "npc_id": "20130",
+      "pos": {
+        "x": -359.7,
+        "y": -249.2
+      },
+      "l2": {
+        "x": -93134,
+        "y": 235880,
+        "z": -3688
+      },
+      "projection_status": "unconfirmed"
+    },
+    {
+      "npc_id": "20130",
+      "pos": {
+        "x": -491.0,
+        "y": -148.7
+      },
+      "l2": {
+        "x": -96885,
+        "y": 238751,
+        "z": -3296
+      },
+      "projection_status": "unconfirmed"
+    },
+    {
+      "npc_id": "20006",
+      "pos": {
+        "x": -651.6,
+        "y": 174.9
+      },
+      "l2": {
+        "x": -101473,
+        "y": 247996,
+        "z": -3424
+      },
+      "projection_status": "unconfirmed"
+    },
+    {
+      "npc_id": "20006",
+      "pos": {
+        "x": -501.2,
+        "y": -291.0
+      },
+      "l2": {
+        "x": -97176,
+        "y": 234686,
+        "z": -3544
+      },
+      "projection_status": "unconfirmed"
+    },
+    {
+      "npc_id": "20006",
+      "pos": {
+        "x": -495.1,
+        "y": 385.7
+      },
+      "l2": {
+        "x": -97004,
+        "y": 254019,
+        "z": -3512
+      },
+      "projection_status": "unconfirmed"
+    }
+  ],
+  "projection": {
+    "origin_l2_x": -84000,
+    "origin_l2_y": 245000,
+    "scale": 0.035,
+    "offset_2d_x": -40.0,
+    "offset_2d_y": 70.0,
+    "status": "unconfirmed",
+    "note": "Hand-tuned projection so HF Talking_Island spawnlist samples fit WORLD_HALF meadow."
+  }
+}

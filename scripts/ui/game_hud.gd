@@ -229,11 +229,11 @@ func _build_inventory() -> void:
 	_inv_panel.anchor_right = 1.0
 	_inv_panel.anchor_top = 0.0
 	_inv_panel.anchor_bottom = 0.0
-	_inv_panel.offset_left = -360
-	_inv_panel.offset_right = -16
+	_inv_panel.offset_left = -400
+	_inv_panel.offset_right = -12
 	_inv_panel.offset_top = 170
-	_inv_panel.offset_bottom = 520
-	_inv_panel.custom_minimum_size = Vector2(340, 340)
+	_inv_panel.offset_bottom = 560
+	_inv_panel.custom_minimum_size = Vector2(380, 380)
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color(0.07, 0.08, 0.1, 0.94)
 	style.border_color = Color(0.6, 0.52, 0.3)
@@ -367,7 +367,7 @@ func refresh(player: Node, world: Node) -> void:
 	var t = world._find_mob(player.target_mob_id) if world else null
 	if t and t.alive:
 		_target_panel.visible = true
-		_target_name.text = "%s  Lv%s" % [t.display_name, "1"]
+		_target_name.text = "%s  Lv%d" % [t.display_name, t.npc_level]
 		_target_hp.max_value = t.max_hp
 		_target_hp.value = t.hp
 		_target_hp_lbl.text = "%d / %d" % [t.hp, t.max_hp]

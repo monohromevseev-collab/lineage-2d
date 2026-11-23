@@ -1,0 +1,67 @@
+{
+  "chronicle": "High Five",
+  "datapack_url": "https://github.com/Shagooh/l2j-server-datapack.git",
+  "datapack_commit": "03897cc4ee42361304fb5a96e59bb7fba174c0a8",
+  "slice": "talking_island_6a",
+  "npc_ids": [
+    20481,
+    20432,
+    20544,
+    20120,
+    20130,
+    20006
+  ],
+  "item_ids": [
+    1,
+    4,
+    11,
+    13,
+    14,
+    21,
+    22,
+    23,
+    28,
+    44,
+    50,
+    57,
+    426,
+    462,
+    1060,
+    1119,
+    1122,
+    1129,
+    1146,
+    1147,
+    1148
+  ],
+  "projection": {
+    "origin_l2_x": -84000,
+    "origin_l2_y": 245000,
+    "scale": 0.035,
+    "offset_2d_x": -40.0,
+    "offset_2d_y": 70.0,
+    "status": "unconfirmed",
+    "note": "Hand-tuned projection so HF Talking_Island spawnlist samples fit WORLD_HALF meadow."
+  },
+  "aliases": {
+    "keltir": "20481",
+    "wolf": "20120",
+    "orc_grunt": "20130",
+    "training_sword": "1",
+    "linen_tunic": "1146",
+    "linen_pants": "1147"
+  },
+  "filters": {
+    "skipped_herbs": true,
+    "skipped_materials_recipes_jewelry": true,
+    "note": "Death drop groups kept only for items present in items.json (equippables + Adena + Lesser Healing Potion)."
+  },
+  "unconfirmed": [
+    "npc.xp_reward (approx from expRate)",
+    "npc.speed / aggro_range / attack_range_px / attack_interval",
+    "spawn 2D projection scale/origin",
+    "Human Fighter base_speed_px",
+    "combat.phys_damage HF-lite formula (70*pAtk/pDef) — not full L2J Formulas.calcPhysDam"
+  ],
+  "unknown_fields": []
+}

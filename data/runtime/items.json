@@ -1,0 +1,416 @@
+{
+  "1": {
+    "id": 1,
+    "name": "Short Sword",
+    "type": "Weapon",
+    "bodypart": "rhand",
+    "slot": "weapon",
+    "weight": 1600,
+    "price": 590,
+    "icon": "icon.weapon_small_sword_i00",
+    "armor_type": "",
+    "weapon_type": "SWORD",
+    "p_atk": 8,
+    "p_def": 0,
+    "visual": {
+      "tier": 0,
+      "weapon": "wood_blade"
+    },
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "4": {
+    "id": 4,
+    "name": "Club",
+    "type": "Weapon",
+    "bodypart": "rhand",
+    "slot": "weapon",
+    "weight": 1870,
+    "price": 590,
+    "icon": "icon.weapon_club_i00",
+    "armor_type": "",
+    "weapon_type": "BLUNT",
+    "p_atk": 8,
+    "p_def": 0,
+    "visual": {
+      "tier": 0,
+      "weapon": "wood_blade"
+    },
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "11": {
+    "id": 11,
+    "name": "Bone Dagger",
+    "type": "Weapon",
+    "bodypart": "rhand",
+    "slot": "weapon",
+    "weight": 1150,
+    "price": 590,
+    "icon": "icon.weapon_bone_dagger_i00",
+    "armor_type": "",
+    "weapon_type": "DAGGER",
+    "p_atk": 7,
+    "p_def": 0,
+    "visual": {
+      "tier": 0,
+      "weapon": "wood_blade"
+    },
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "13": {
+    "id": 13,
+    "name": "Short Bow",
+    "type": "Weapon",
+    "bodypart": "lrhand",
+    "slot": "weapon",
+    "weight": 1950,
+    "price": 590,
+    "icon": "icon.weapon_short_bow_i00",
+    "armor_type": "",
+    "weapon_type": "BOW",
+    "p_atk": 16,
+    "p_def": 0,
+    "visual": {
+      "tier": 1,
+      "weapon": "bronze_blade"
+    },
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "14": {
+    "id": 14,
+    "name": "Bow",
+    "type": "Weapon",
+    "bodypart": "lrhand",
+    "slot": "weapon",
+    "weight": 1930,
+    "price": 9600,
+    "icon": "icon.weapon_bow_i00",
+    "armor_type": "",
+    "weapon_type": "BOW",
+    "p_atk": 23,
+    "p_def": 0,
+    "visual": {
+      "tier": 2,
+      "weapon": "steel_blade"
+    },
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "21": {
+    "id": 21,
+    "name": "Shirt",
+    "type": "Armor",
+    "bodypart": "chest",
+    "slot": "chest",
+    "weight": 4830,
+    "price": 113,
+    "icon": "icon.armor_t02_u_i00",
+    "armor_type": "LIGHT",
+    "weapon_type": "",
+    "p_atk": 0,
+    "p_def": 36,
+    "visual": {
+      "tier": 0,
+      "chest": "linen"
+    },
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "22": {
+    "id": 22,
+    "name": "Leather Shirt",
+    "type": "Armor",
+    "bodypart": "chest",
+    "slot": "chest",
+    "weight": 4830,
+    "price": 1870,
+    "icon": "icon.armor_t04_u_i00",
+    "armor_type": "LIGHT",
+    "weapon_type": "",
+    "p_atk": 0,
+    "p_def": 43,
+    "visual": {
+      "tier": 1,
+      "chest": "bronze"
+    },
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "23": {
+    "id": 23,
+    "name": "Wooden Breastplate",
+    "type": "Armor",
+    "bodypart": "chest",
+    "slot": "chest",
+    "weight": 4820,
+    "price": 6120,
+    "icon": "icon.armor_t06_u_i00",
+    "armor_type": "LIGHT",
+    "weapon_type": "",
+    "p_atk": 0,
+    "p_def": 47,
+    "visual": {
+      "tier": 1,
+      "chest": "bronze"
+    },
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "28": {
+    "id": 28,
+    "name": "Pants",
+    "type": "Armor",
+    "bodypart": "legs",
+    "slot": "legs",
+    "weight": 1740,
+    "price": 71,
+    "icon": "icon.armor_t02_l_i00",
+    "armor_type": "LIGHT",
+    "weapon_type": "",
+    "p_atk": 0,
+    "p_def": 22,
+    "visual": {
+      "tier": 0,
+      "legs": "linen"
+    },
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "44": {
+    "id": 44,
+    "name": "Leather Helmet",
+    "type": "Armor",
+    "bodypart": "head",
+    "slot": "head",
+    "weight": 650,
+    "price": 7820,
+    "icon": "icon.armor_leather_helmet_i00",
+    "armor_type": "",
+    "weapon_type": "",
+    "p_atk": 0,
+    "p_def": 23,
+    "visual": {
+      "tier": 1,
+      "head": "bronze"
+    },
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "50": {
+    "id": 50,
+    "name": "Leather Gloves",
+    "type": "Armor",
+    "bodypart": "gloves",
+    "slot": "gloves",
+    "weight": 650,
+    "price": 5210,
+    "icon": "icon.armor_t32_g_i00",
+    "armor_type": "",
+    "weapon_type": "",
+    "p_atk": 0,
+    "p_def": 15,
+    "visual": {
+      "tier": 1
+    },
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "57": {
+    "id": 57,
+    "name": "Adena",
+    "type": "EtcItem",
+    "bodypart": "",
+    "slot": "etc",
+    "weight": 0,
+    "price": 1,
+    "icon": "icon.etc_adena_i00",
+    "armor_type": "",
+    "weapon_type": "",
+    "p_atk": 0,
+    "p_def": 0,
+    "visual": {
+      "tier": 0
+    },
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "462": {
+    "id": 462,
+    "name": "Stockings",
+    "type": "Armor",
+    "bodypart": "legs",
+    "slot": "legs",
+    "weight": 1080,
+    "price": 71,
+    "icon": "icon.armor_t03_l_i00",
+    "armor_type": "MAGIC",
+    "weapon_type": "",
+    "p_atk": 0,
+    "p_def": 11,
+    "visual": {
+      "tier": 0,
+      "legs": "linen"
+    },
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "426": {
+    "id": 426,
+    "name": "Tunic",
+    "type": "Armor",
+    "bodypart": "chest",
+    "slot": "chest",
+    "weight": 2150,
+    "price": 113,
+    "icon": "icon.armor_t03_u_i00",
+    "armor_type": "MAGIC",
+    "weapon_type": "",
+    "p_atk": 0,
+    "p_def": 18,
+    "visual": {
+      "tier": 0,
+      "chest": "linen"
+    },
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "1060": {
+    "id": 1060,
+    "name": "Lesser Healing Potion",
+    "type": "EtcItem",
+    "bodypart": "",
+    "slot": "etc",
+    "weight": 5,
+    "price": 90,
+    "icon": "icon.etc_lesser_potion_red_i00",
+    "armor_type": "",
+    "weapon_type": "",
+    "p_atk": 0,
+    "p_def": 0,
+    "visual": {
+      "tier": 0
+    },
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "1119": {
+    "id": 1119,
+    "name": "Short Leather Gloves",
+    "type": "Armor",
+    "bodypart": "gloves",
+    "slot": "gloves",
+    "weight": 660,
+    "price": 470,
+    "icon": "icon.armor_t04_g_i00",
+    "armor_type": "",
+    "weapon_type": "",
+    "p_atk": 0,
+    "p_def": 11,
+    "visual": {
+      "tier": 1
+    },
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "1122": {
+    "id": 1122,
+    "name": "Cotton Shoes",
+    "type": "Armor",
+    "bodypart": "feet",
+    "slot": "feet",
+    "weight": 1320,
+    "price": 470,
+    "icon": "icon.armor_t50_b_i00",
+    "armor_type": "",
+    "weapon_type": "",
+    "p_atk": 0,
+    "p_def": 11,
+    "visual": {
+      "tier": 0
+    },
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "1129": {
+    "id": 1129,
+    "name": "Crude Leather Shoes",
+    "type": "Armor",
+    "bodypart": "feet",
+    "slot": "feet",
+    "weight": 1320,
+    "price": 470,
+    "icon": "icon.armor_t04_b_i00",
+    "armor_type": "",
+    "weapon_type": "",
+    "p_atk": 0,
+    "p_def": 11,
+    "visual": {
+      "tier": 1
+    },
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "1146": {
+    "id": 1146,
+    "name": "Squire's Shirt",
+    "type": "Armor",
+    "bodypart": "chest",
+    "slot": "chest",
+    "weight": 3301,
+    "price": 20,
+    "icon": "icon.armor_t01_u_i00",
+    "armor_type": "LIGHT",
+    "weapon_type": "",
+    "p_atk": 0,
+    "p_def": 33,
+    "visual": {
+      "tier": 0,
+      "chest": "linen"
+    },
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "1147": {
+    "id": 1147,
+    "name": "Squire's Pants",
+    "type": "Armor",
+    "bodypart": "legs",
+    "slot": "legs",
+    "weight": 1750,
+    "price": 4,
+    "icon": "icon.armor_t01_l_i00",
+    "armor_type": "LIGHT",
+    "weapon_type": "",
+    "p_atk": 0,
+    "p_def": 20,
+    "visual": {
+      "tier": 0,
+      "legs": "linen"
+    },
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "1148": {
+    "id": 1148,
+    "name": "Hard Leather Helmet",
+    "type": "Armor",
+    "bodypart": "head",
+    "slot": "head",
+    "weight": 640,
+    "price": 14200,
+    "icon": "icon.armor_leather_helmet_i00",
+    "armor_type": "",
+    "weapon_type": "",
+    "p_atk": 0,
+    "p_def": 26,
+    "visual": {
+      "tier": 2,
+      "head": "steel"
+    },
+    "source": "hf_datapack",
+    "status": "confirmed"
+  }
+}
