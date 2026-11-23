@@ -1,0 +1,361 @@
+{
+  "20481": {
+    "id": 20481,
+    "name": "Bearded Keltir",
+    "level": 1,
+    "type": "L2Monster",
+    "max_hp": 40,
+    "p_atk": 8,
+    "p_def": 44,
+    "exp_rate": 35.268,
+    "sp": 2,
+    "xp_reward": 35,
+    "xp_reward_status": "unconfirmed",
+    "xp_reward_note": "approx max(1, round(expRate)); full L2J Exp.getExpForLevel not ported",
+    "speed": 70.0,
+    "speed_status": "unconfirmed",
+    "aggro_range": 0.0,
+    "aggro_range_status": "unconfirmed",
+    "attack_range": 42.0,
+    "attack_range_status": "unconfirmed",
+    "attack_interval": 1.364,
+    "attack_interval_status": "unconfirmed",
+    "silhouette": "fox",
+    "color": [
+      0.72,
+      0.48,
+      0.28
+    ],
+    "drop_groups": [
+      {
+        "chance": 70.0,
+        "items": [
+          {
+            "item_id": "57",
+            "min": 8,
+            "max": 12,
+            "chance": 100.0
+          }
+        ]
+      },
+      {
+        "chance": 3.774600028991699,
+        "items": [
+          {
+            "item_id": "426",
+            "min": 1,
+            "max": 1,
+            "chance": 38.587
+          },
+          {
+            "item_id": "462",
+            "min": 1,
+            "max": 1,
+            "chance": 61.413
+          }
+        ]
+      }
+    ],
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "20432": {
+    "id": 20432,
+    "name": "Elpy",
+    "level": 1,
+    "type": "L2Monster",
+    "max_hp": 40,
+    "p_atk": 8,
+    "p_def": 44,
+    "exp_rate": 35.268,
+    "sp": 2,
+    "xp_reward": 35,
+    "xp_reward_status": "unconfirmed",
+    "xp_reward_note": "approx max(1, round(expRate)); full L2J Exp.getExpForLevel not ported",
+    "speed": 70.0,
+    "speed_status": "unconfirmed",
+    "aggro_range": 0.0,
+    "aggro_range_status": "unconfirmed",
+    "attack_range": 42.0,
+    "attack_range_status": "unconfirmed",
+    "attack_interval": 1.364,
+    "attack_interval_status": "unconfirmed",
+    "silhouette": "fox",
+    "color": [
+      0.85,
+      0.78,
+      0.45
+    ],
+    "drop_groups": [
+      {
+        "chance": 70.0,
+        "items": [
+          {
+            "item_id": "57",
+            "min": 8,
+            "max": 12,
+            "chance": 100.0
+          }
+        ]
+      },
+      {
+        "chance": 0.5579000115394592,
+        "items": [
+          {
+            "item_id": "11",
+            "min": 1,
+            "max": 1,
+            "chance": 100.0
+          }
+        ]
+      }
+    ],
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "20544": {
+    "id": 20544,
+    "name": "Elder Keltir",
+    "level": 3,
+    "type": "L2Monster",
+    "max_hp": 58,
+    "p_atk": 10,
+    "p_def": 48,
+    "exp_rate": 11.76,
+    "sp": 2,
+    "xp_reward": 12,
+    "xp_reward_status": "unconfirmed",
+    "xp_reward_note": "approx max(1, round(expRate)); full L2J Exp.getExpForLevel not ported",
+    "speed": 70.0,
+    "speed_status": "unconfirmed",
+    "aggro_range": 0.0,
+    "aggro_range_status": "unconfirmed",
+    "attack_range": 42.0,
+    "attack_range_status": "unconfirmed",
+    "attack_interval": 1.364,
+    "attack_interval_status": "unconfirmed",
+    "silhouette": "fox",
+    "color": [
+      0.55,
+      0.38,
+      0.22
+    ],
+    "drop_groups": [
+      {
+        "chance": 70.0,
+        "items": [
+          {
+            "item_id": "57",
+            "min": 13,
+            "max": 20,
+            "chance": 100.0
+          }
+        ]
+      },
+      {
+        "chance": 6.427000045776367,
+        "items": [
+          {
+            "item_id": "21",
+            "min": 1,
+            "max": 1,
+            "chance": 38.587
+          },
+          {
+            "item_id": "28",
+            "min": 1,
+            "max": 1,
+            "chance": 61.413
+          }
+        ]
+      }
+    ],
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "20120": {
+    "id": 20120,
+    "name": "Wolf",
+    "level": 4,
+    "type": "L2Monster",
+    "max_hp": 68,
+    "p_atk": 11,
+    "p_def": 50,
+    "exp_rate": 8.82,
+    "sp": 4,
+    "xp_reward": 9,
+    "xp_reward_status": "unconfirmed",
+    "xp_reward_note": "approx max(1, round(expRate)); full L2J Exp.getExpForLevel not ported",
+    "speed": 95.0,
+    "speed_status": "unconfirmed",
+    "aggro_range": 110.0,
+    "aggro_range_status": "unconfirmed",
+    "attack_range": 42.0,
+    "attack_range_status": "unconfirmed",
+    "attack_interval": 1.364,
+    "attack_interval_status": "unconfirmed",
+    "silhouette": "wolf",
+    "color": [
+      0.45,
+      0.48,
+      0.55
+    ],
+    "drop_groups": [
+      {
+        "chance": 70.0,
+        "items": [
+          {
+            "item_id": "57",
+            "min": 19,
+            "max": 29,
+            "chance": 100.0
+          }
+        ]
+      },
+      {
+        "chance": 1.3530000448226929,
+        "items": [
+          {
+            "item_id": "13",
+            "min": 1,
+            "max": 1,
+            "chance": 100.0
+          }
+        ]
+      },
+      {
+        "chance": 5.011300086975098,
+        "items": [
+          {
+            "item_id": "1060",
+            "min": 1,
+            "max": 1,
+            "chance": 44.2478
+          }
+        ]
+      }
+    ],
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "20130": {
+    "id": 20130,
+    "name": "Orc",
+    "level": 6,
+    "type": "L2Monster",
+    "max_hp": 94,
+    "p_atk": 14,
+    "p_def": 54,
+    "exp_rate": 5.9388,
+    "sp": 6,
+    "xp_reward": 6,
+    "xp_reward_status": "unconfirmed",
+    "xp_reward_note": "approx max(1, round(expRate)); full L2J Exp.getExpForLevel not ported",
+    "speed": 70.0,
+    "speed_status": "unconfirmed",
+    "aggro_range": 110.0,
+    "aggro_range_status": "unconfirmed",
+    "attack_range": 42.0,
+    "attack_range_status": "unconfirmed",
+    "attack_interval": 1.364,
+    "attack_interval_status": "unconfirmed",
+    "silhouette": "orc",
+    "color": [
+      0.35,
+      0.55,
+      0.32
+    ],
+    "drop_groups": [
+      {
+        "chance": 70.0,
+        "items": [
+          {
+            "item_id": "57",
+            "min": 41,
+            "max": 58,
+            "chance": 100.0
+          }
+        ]
+      },
+      {
+        "chance": 1.954300045967102,
+        "items": [
+          {
+            "item_id": "1122",
+            "min": 1,
+            "max": 1,
+            "chance": 33.3333
+          },
+          {
+            "item_id": "1129",
+            "min": 1,
+            "max": 1,
+            "chance": 33.3333
+          },
+          {
+            "item_id": "1119",
+            "min": 1,
+            "max": 1,
+            "chance": 33.3334
+          }
+        ]
+      }
+    ],
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "20006": {
+    "id": 20006,
+    "name": "Orc Archer",
+    "level": 8,
+    "type": "L2Monster",
+    "max_hp": 125,
+    "p_atk": 16,
+    "p_def": 58,
+    "exp_rate": 4.581481,
+    "sp": 10,
+    "xp_reward": 5,
+    "xp_reward_status": "unconfirmed",
+    "xp_reward_note": "approx max(1, round(expRate)); full L2J Exp.getExpForLevel not ported",
+    "speed": 70.0,
+    "speed_status": "unconfirmed",
+    "aggro_range": 110.0,
+    "aggro_range_status": "unconfirmed",
+    "attack_range": 1155.0,
+    "attack_range_status": "unconfirmed",
+    "attack_interval": 1.364,
+    "attack_interval_status": "unconfirmed",
+    "silhouette": "orc",
+    "color": [
+      0.42,
+      0.48,
+      0.28
+    ],
+    "drop_groups": [
+      {
+        "chance": 70.0,
+        "items": [
+          {
+            "item_id": "57",
+            "min": 69,
+            "max": 94,
+            "chance": 100.0
+          }
+        ]
+      },
+      {
+        "chance": 0.3497999906539917,
+        "items": [
+          {
+            "item_id": "14",
+            "min": 1,
+            "max": 1,
+            "chance": 22.5806
+          }
+        ]
+      }
+    ],
+    "source": "hf_datapack",
+    "status": "confirmed"
+  }
+}

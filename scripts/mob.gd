@@ -12,8 +12,9 @@ var _selected: bool = false
 var _select_poly: Polygon2D
 
 var mob_id: int = 0
-var template_id: String = "keltir"
+var template_id: String = "20481"
 var display_name: String = "Mob"
+var npc_level: int = 1
 var max_hp: int = 50
 var hp: int = 50
 var p_atk: int = 5
@@ -45,6 +46,7 @@ func setup(id: int, template: String, pos: Vector2) -> void:
 	set_multiplayer_authority(1)
 	var t: Dictionary = MobData.get_template(template)
 	display_name = str(t.get("name", template))
+	npc_level = int(t.get("level", 1))
 	max_hp = int(t.get("max_hp", 50))
 	hp = max_hp
 	p_atk = int(t.get("p_atk", 5))

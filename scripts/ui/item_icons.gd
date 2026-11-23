@@ -34,6 +34,14 @@ static func draw_item(canvas: CanvasItem, item_id: String, rect: Rect2) -> void:
 			var col4 := Color(0.4, 0.45, 0.55) if tier >= 1 else Color(0.55, 0.48, 0.35)
 			canvas.draw_rect(Rect2(c + Vector2(-s * 0.7, -s * 0.3), Vector2(s * 0.55, s * 1.2)), col4)
 			canvas.draw_rect(Rect2(c + Vector2(s * 0.15, -s * 0.3), Vector2(s * 0.55, s * 1.2)), col4)
+		"gloves", "feet":
+			canvas.draw_circle(c, s * 0.85, Color(0.55, 0.42, 0.28))
+		"etc":
+			# Adena / potions
+			if item_id == "57":
+				canvas.draw_circle(c, s, Color(0.95, 0.82, 0.25))
+			else:
+				canvas.draw_circle(c, s, Color(0.45, 0.75, 0.45))
 		_:
 			canvas.draw_circle(c, s, Color(0.5, 0.55, 0.45))
 

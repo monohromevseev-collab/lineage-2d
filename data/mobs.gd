@@ -1,82 +1,49 @@
 extends RefCounted
-## Mob templates scattered across the expanded Talking Island meadow.
+## Thin wrapper over HF DataRegistry NPCs + projected TI spawns.
 
-const TEMPLATES := {
-	"keltir": {
-		"name": "Keltir",
-		"max_hp": 55,
-		"p_atk": 6,
-		"p_def": 4,
-		"xp": 28,
-		"speed": 70.0,
-		"aggro_range": 0.0,
-		"attack_range": 42.0,
-		"attack_interval": 1.4,
-		"silhouette": "fox",
-		"color": Color(0.72, 0.48, 0.28),
-		"loot": [
-			{"item_id": "bronze_sword", "chance": 0.55, "min": 1, "max": 1},
-			{"item_id": "bronze_breastplate", "chance": 0.40, "min": 1, "max": 1},
-		],
-	},
-	"wolf": {
-		"name": "Wolf",
-		"max_hp": 90,
-		"p_atk": 11,
-		"p_def": 7,
-		"xp": 48,
-		"speed": 95.0,
-		"aggro_range": 110.0,
-		"attack_range": 46.0,
-		"attack_interval": 1.2,
-		"silhouette": "wolf",
-		"color": Color(0.45, 0.48, 0.55),
-		"loot": [
-			{"item_id": "bronze_greaves", "chance": 0.50, "min": 1, "max": 1},
-			{"item_id": "bronze_helm", "chance": 0.45, "min": 1, "max": 1},
-			{"item_id": "steel_longsword", "chance": 0.18, "min": 1, "max": 1},
-		],
-	},
-	"orc_grunt": {
-		"name": "Orc Grunt",
-		"max_hp": 160,
-		"p_atk": 16,
-		"p_def": 14,
-		"xp": 85,
-		"speed": 55.0,
-		"aggro_range": 130.0,
-		"attack_range": 50.0,
-		"attack_interval": 1.6,
-		"silhouette": "orc",
-		"color": Color(0.35, 0.55, 0.32),
-		"loot": [
-			{"item_id": "steel_cuirass", "chance": 0.55, "min": 1, "max": 1},
-			{"item_id": "steel_greaves", "chance": 0.45, "min": 1, "max": 1},
-			{"item_id": "steel_helm", "chance": 0.40, "min": 1, "max": 1},
-			{"item_id": "steel_longsword", "chance": 0.35, "min": 1, "max": 1},
-		],
-	},
-}
 
-## Spread across a large seamless meadow (world coords).
-const SPAWNS := [
-	{"template": "keltir", "pos": Vector2(220, 40)},
-	{"template": "keltir", "pos": Vector2(280, 110)},
-	{"template": "keltir", "pos": Vector2(180, 160)},
-	{"template": "keltir", "pos": Vector2(340, 60)},
-	{"template": "keltir", "pos": Vector2(420, 140)},
-	{"template": "wolf", "pos": Vector2(-320, -80)},
-	{"template": "wolf", "pos": Vector2(-400, 40)},
-	{"template": "wolf", "pos": Vector2(-280, 120)},
-	{"template": "wolf", "pos": Vector2(-480, -40)},
-	{"template": "orc_grunt", "pos": Vector2(80, -320)},
-	{"template": "orc_grunt", "pos": Vector2(-60, -380)},
-	{"template": "orc_grunt", "pos": Vector2(160, -400)},
-	{"template": "keltir", "pos": Vector2(520, -100)},
-	{"template": "wolf", "pos": Vector2(-200, 280)},
-	{"template": "orc_grunt", "pos": Vector2(300, 300)},
-]
+static func _reg():
+	return preload("res://data/data_registry.gd")
 
 
 static func get_template(id: String) -> Dictionary:
-	return TEMPLATES.get(id, {})
+	var t: Dictionary = _reg().get_npc(id)
+	if t.is_empty():
+		return {}
+	# Shape expected by mob.gd / game_world (legacy keys).
+	var color_arr: Array = t.get("color", [0.6, 0.6, 0.6])
+	var col := Color(1, 1, 1)
+	if color_arr.size() >= 3:
+		col = Color(float(color_arr[0]), float(color_arr[1]), float(color_arr[2]))
+	return {
+		"name": str(t.get("name", id)),
+		"level": int(t.get("level", 1)),
+		"max_hp": int(t.get("max_hp", 50)),
+		"p_atk": int(t.get("p_atk", 5)),
+		"p_def": int(t.get("p_def", 4)),
+		"xp": int(t.get("xp_reward", 20)),
+		"speed": float(t.get("speed", 70.0)),
+		"aggro_range": float(t.get("aggro_range", 0.0)),
+		"attack_range": float(t.get("attack_range", 42.0)),
+		"attack_interval": float(t.get("attack_interval", 1.4)),
+		"silhouette": str(t.get("silhouette", "fox")),
+		"color": col,
+		"npc_id": str(t.get("id", id)),
+	}
+
+
+static var SPAWNS: Array:
+	get:
+		var out: Array = []
+		for entry in _reg().spawns:
+			var pos_doc: Dictionary = entry.get("pos", {})
+			out.append({
+				"template": str(entry.get("npc_id", "")),
+				"pos": Vector2(float(pos_doc.get("x", 0.0)), float(pos_doc.get("y", 0.0))),
+			})
+		return out
+
+
+static var TEMPLATES: Dictionary:
+	get:
+		return _reg().npcs

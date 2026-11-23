@@ -1,20 +1,22 @@
 # Lineage 2d
 
-2D multiplayer prototype inspired by Lineage 2 (High Five).  
+2D multiplayer prototype inspired by Lineage 2 (**High Five**).  
 Engine: **Godot 4.3** · authoritative dedicated server (ENet).
 
-## Slice 2 (current)
+## Slice 6a (current)
 
-- L2-style HUD: **CP / HP / MP / XP** bars, target frame, skill bar, inventory with item icons
-- **Target combat**: LMB or Tab to select → **F / Attack skill** to engage; server checks range + facing
-- Expanded **seamless meadow** (soft far bounds), talking stone spawn, **minimap + full map (M)**
-- Walk / idle bob animations for player and mobs
-- Layered gear still changes appearance on equip
+- **HF Data Foundation**: Talking Island runtime JSON from an L2J High Five datapack
+- `DataRegistry` loads `data/runtime/*.json` (items, NPCs, drops, spawns, exp, Human Fighter)
+- Toy tables replaced: real HF ids (e.g. Bearded Keltir **20481**, Short Sword **1**)
+- Slice 2 UI/net kept: HUD, target→engage, minimap, walk anims, authoritative combat
+
+See [`docs/hf-data-sources.md`](docs/hf-data-sources.md) for datapack URL/commit and unconfirmed fields.
 
 ## Requirements
 
 - [Godot 4.3+](https://godotengine.org/download)
 - Linux / macOS / Windows
+- Python 3.10+ only if regenerating runtime data (`tools/hf_ingest`)
 
 ## Controls
 
@@ -51,19 +53,19 @@ godot --path . --rendering-driver opengl3 -- --client --host 127.0.0.1 --port 77
 
 ## Suggested loop
 
-1. Spawn at the glowing **talking stone** (linen starter).
-2. Open minimap (top-right); walk the paths east to Keltirs.
-3. **Click** a Keltir → press **F** to engage → watch target frame + CP/HP.
-4. **E** loot → **I** open bag → click icon to equip → armor layers update.
-5. **M** for full map of the meadow.
+1. Spawn at the glowing **talking stone** (Short Sword + Squire shirt/pants).
+2. Hunt **Bearded Keltir / Elpy** nearby → engage with **F**.
+3. XP follows the HF exp table; loot uses HF death-drop group chances (Adena + gear; herbs filtered).
+4. **E** loot → **I** / click to equip → pAtk/pDef on the HUD update.
 
 ## Layout
 
 ```
-data/            items, mobs, combat
-scenes/          world, player, mob, loot, character visual
-scripts/         simulation + ui/
-project.godot
+data/runtime/    HF JSON (items, npcs, drops, spawns, exp, classes)
+data/*.gd        DataRegistry + thin wrappers + combat helpers
+tools/hf_ingest/ L2J HF → JSON converter
+docs/            hf-data-sources.md
+scenes/ scripts/ world, player, mob, loot, HUD
 ```
 
 ## Slice history
@@ -71,7 +73,8 @@ project.godot
 - **0** — multiplayer move
 - **1** — combat / XP / loot / layered gear
 - **2** — HUD, target combat, seamless map, minimap, walk anims
+- **6a** — HF datapack ingest + DataRegistry (Talking Island slice)
 
 ## License
 
-Prototype / work in progress.
+Prototype / work in progress. Datapack rights remain with their upstream L2J authors; we only ship a narrow generated JSON slice.

@@ -1,13 +1,13 @@
 ; Engine configuration file.
-; Slice 2 — L2-feel HUD, target combat, seamless world, walk anims.
+; Slice 6a — HF Data Foundation (Talking Island runtime JSON) on slice-2 UI/net.
 
 config_version=5
 
 [application]
 
 config/name="Lineage 2d"
-config/description="2D multiplayer Lineage 2–inspired prototype. Slice 2: HUD bars, target combat, seamless meadow, minimap, walk animations."
-config/version="0.2.0"
+config/description="2D multiplayer Lineage 2 High Five–inspired prototype. Slice 6a: HF datapack runtime data + DataRegistry; HUD/target combat from slice 2."
+config/version="0.6.0"
 run/main_scene="res://scenes/bootstrap.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 config/icon="res://icon.svg"

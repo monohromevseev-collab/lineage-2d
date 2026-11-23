@@ -1,11 +1,12 @@
 extends Node2D
-## Slice 2: L2-feel HUD, target combat, seamless meadow, minimap, walk anims.
+## Slice 6a: HF Data Foundation on slice-2 UI/net (Talking Island runtime JSON).
 
 const PLAYER_SCENE := preload("res://scenes/player.tscn")
 const MOB_SCENE := preload("res://scenes/mob.tscn")
 const LOOT_SCENE := preload("res://scenes/loot_drop.tscn")
 const HUD_SCRIPT := preload("res://scripts/ui/game_hud.gd")
 const NetConfig := preload("res://scripts/net_config.gd")
+const DataRegistry := preload("res://data/data_registry.gd")
 const MobData := preload("res://data/mobs.gd")
 const Items := preload("res://data/items.gd")
 const Combat := preload("res://data/combat.gd")
@@ -41,6 +42,7 @@ const SPAWN_JITTER := [
 
 
 func _ready() -> void:
+	DataRegistry.ensure_loaded()
 	if net_cfg.is_empty():
 		net_cfg = NetConfig.from_cmdline()
 
@@ -490,7 +492,7 @@ func server_player_swing(player: Node, _delta: float) -> void:
 	player._attack_cd = float(player.stats.get("atk_interval", 1.0))
 	# Face toward target on swing
 	player.facing = (target.position - player.position).normalized()
-	var chance := Combat.hit_chance(float(player.stats.get("accuracy", 30)), 10.0, player.level, 1)
+	var chance := Combat.hit_chance(float(player.stats.get("accuracy", 30)), 10.0, player.level, int(target.npc_level))
 	if randf() > chance:
 		_fx_miss.rpc(player.peer_id, target.mob_id)
 		return
@@ -514,11 +516,10 @@ func _on_mob_killed(player: Node, mob: Node) -> void:
 
 
 func _roll_loot(mob: Node) -> void:
-	var t: Dictionary = MobData.get_template(mob.template_id)
-	for entry in t.get("loot", []):
-		if randf() > float(entry.get("chance", 0.0)):
-			continue
-		var item_id: String = str(entry.get("item_id", ""))
+	# HF group-chance drop roll (Adena + equippables; herbs/materials filtered at ingest).
+	var dropped: Array = DataRegistry.roll_drops(str(mob.template_id))
+	for item_id_v in dropped:
+		var item_id: String = str(item_id_v)
 		if item_id == "":
 			continue
 		var drop_id := _next_drop_id
