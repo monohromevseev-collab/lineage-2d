@@ -59,8 +59,9 @@ func _ensure_sprite() -> void:
 	_sprite.name = "PixelBody"
 	_sprite.centered = true
 	_sprite.position = Vector2(0, -6)
+	_sprite.z_index = 2
 	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	_sprite.scale = Vector2(0.85, 0.85)
+	_sprite.scale = Vector2(1.0, 1.0)
 	add_child(_sprite)
 	_wing = Polygon2D.new()
 	_wing.name = "Wing"
@@ -77,20 +78,40 @@ func _ensure_sprite() -> void:
 
 
 func _load_sex_texture() -> void:
+	## Load PNG from disk (bypass stale .godot/imported cache).
 	var path := TEX_M if sex != "female" else TEX_F
+	var abs_path := ProjectSettings.globalize_path(path)
+	var img := Image.new()
+	var err := img.load(abs_path)
+	if err == OK and img.get_width() > 0:
+		var tex := ImageTexture.create_from_image(img)
+		_sprite.texture = tex
+		_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		_use_pixel = true
+		_set_poly_visible(false)
+		print("[visual] pixel sheet %s %sx%s sex=%s" % [path, img.get_width(), img.get_height(), sex])
+		return
+	# Fallback to ResourceLoader if Image.load failed.
 	if ResourceLoader.exists(path):
 		_sprite.texture = load(path)
 		_use_pixel = true
 		_set_poly_visible(false)
-	else:
-		_use_pixel = false
-		_set_poly_visible(true)
+		print("[visual] resource sheet %s sex=%s" % [path, sex])
+		return
+	_use_pixel = false
+	_set_poly_visible(true)
+	push_warning("[visual] missing pixel sheet %s — polygons fallback" % path)
 
 
 func _set_poly_visible(on: bool) -> void:
-	for n in [legs, torso, arms, head, hair, helm, weapon, accent]:
+	# Keep weapon/accent available for gear overlays; hide body polygons when pixel sheet is on.
+	for n in [legs, torso, arms, head, hair, helm]:
 		if n:
 			n.visible = on
+	if not on:
+		# Pixel mode: body from sheet; weapon/accent toggled by apply_gear.
+		if helm:
+			helm.visible = false
 	if _sprite:
 		_sprite.visible = not on
 
