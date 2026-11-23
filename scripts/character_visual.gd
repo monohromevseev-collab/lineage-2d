@@ -40,6 +40,7 @@ var race_id: String = "human"
 var _use_pixel: bool = true
 var _race_modulate: Color = Color(1, 1, 1)
 var _equipped_cache: Dictionary = {}
+var _loaded_sheet: String = ""
 
 
 func _ready() -> void:
@@ -80,6 +81,9 @@ func _ensure_sprite() -> void:
 func _load_sex_texture() -> void:
 	## Load PNG from disk (bypass stale .godot/imported cache).
 	var path := TEX_M if sex != "female" else TEX_F
+	if path == _loaded_sheet and _sprite and _sprite.texture != null and _use_pixel:
+		_set_poly_visible(false)
+		return
 	var abs_path := ProjectSettings.globalize_path(path)
 	var img := Image.new()
 	var err := img.load(abs_path)
@@ -88,6 +92,7 @@ func _load_sex_texture() -> void:
 		_sprite.texture = tex
 		_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		_use_pixel = true
+		_loaded_sheet = path
 		_set_poly_visible(false)
 		print("[visual] pixel sheet %s %sx%s sex=%s" % [path, img.get_width(), img.get_height(), sex])
 		return
@@ -95,10 +100,12 @@ func _load_sex_texture() -> void:
 	if ResourceLoader.exists(path):
 		_sprite.texture = load(path)
 		_use_pixel = true
+		_loaded_sheet = path
 		_set_poly_visible(false)
 		print("[visual] resource sheet %s sex=%s" % [path, sex])
 		return
 	_use_pixel = false
+	_loaded_sheet = ""
 	_set_poly_visible(true)
 	push_warning("[visual] missing pixel sheet %s — polygons fallback" % path)
 

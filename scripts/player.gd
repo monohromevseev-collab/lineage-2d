@@ -91,6 +91,11 @@ func set_display_name(pname: String) -> void:
 	display_name = pname
 	if name_label:
 		name_label.text = "%s  Lv%d" % [pname, level]
+	# Name often arrives after spawn (Player-id → Alice); re-apply sex sheet.
+	var next_sex := _guess_sex(pname)
+	if next_sex != sex:
+		sex = next_sex
+		_refresh_visual()
 
 
 func is_local_client() -> bool:
