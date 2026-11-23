@@ -52,6 +52,8 @@ var _adena_lbl: Label
 var _player_ref: WeakRef
 var _world_ref: WeakRef
 var _last_inv: Array = []
+var _last_adena: int = -1
+var _last_ss: int = -1
 
 
 func _ready() -> void:
@@ -482,7 +484,9 @@ func refresh(player: Node, world: Node) -> void:
 		_target_panel.visible = false
 
 	_quest_lbl.text = "Quest: %s" % QuestEngine.objective_text(player)
-	_adena_lbl.text = "Adena: %d" % int(player.quests.get("adena", 0))
+	var adena_now := int(player.quests.get("adena", 0))
+	_adena_lbl.text = "Adena: %d" % adena_now
+	var ss_now := int(player.quests.get("stack_5789", 0))
 
 	for slot in _equip_labels.keys():
 		var id: String = str(player.equipped.get(slot, ""))
@@ -491,9 +495,13 @@ func refresh(player: Node, world: Node) -> void:
 		icon.item_id = id
 		icon.queue_redraw()
 
-	if _inv_visible and str(player.inventory) != str(_last_inv):
+	var inv_dirty := str(player.inventory) != str(_last_inv) \
+		or adena_now != _last_adena or ss_now != _last_ss
+	if _inv_visible and inv_dirty:
 		_rebuild_inv_grid()
 	_last_inv = player.inventory.duplicate()
+	_last_adena = adena_now
+	_last_ss = ss_now
 	_minimap.queue_redraw()
 	if _fullmap_visible:
 		_fullmap.queue_redraw()
@@ -505,17 +513,30 @@ func _rebuild_inv_grid() -> void:
 	var p: Node = _player_ref.get_ref() if _player_ref else null
 	if p == null:
 		return
-	for item_id in p.inventory:
+	# Deduplicate bag display: Adena / Soulshots appear once with count badge.
+	var seen: Dictionary = {}
+	for item_id_v in p.inventory:
+		var item_id := str(item_id_v)
+		if seen.has(item_id):
+			continue
+		seen[item_id] = true
 		var btn: Button = IconSlot.new()
 		btn.custom_minimum_size = Vector2(44, 44)
 		btn.kind = "item"
-		btn.icon_id = str(item_id)
-		var tip := Items.display_name(str(item_id))
-		var stack_key := "stack_%s" % str(item_id)
-		if p.quests.has(stack_key):
-			tip = "%s x%d" % [tip, int(p.quests[stack_key])]
+		btn.icon_id = item_id
+		var tip := Items.display_name(item_id)
+		var count := 0
+		if item_id == "57":
+			count = int(p.quests.get("adena", 0))
+			tip = "%s ×%d" % [tip, count]
+		else:
+			var stack_key := "stack_%s" % item_id
+			if p.quests.has(stack_key):
+				count = int(p.quests[stack_key])
+				tip = "%s ×%d" % [tip, count]
+		btn.stack_count = count
 		btn.tooltip_text = tip
-		var captured := str(item_id)
+		var captured := item_id
 		btn.pressed.connect(func (): equip_item.emit(captured))
 		_inv_grid.add_child(btn)
 

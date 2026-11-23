@@ -102,12 +102,14 @@ static func xp_cumulative(level: int) -> int:
 
 
 ## HF death-drop: each group rolls independently; one item picked by weight inside the group.
+## Returns Array of { "item_id": String, "count": int } — Adena (57) is always one stacked entry.
 static func roll_drops(npc_id: String) -> Array:
 	ensure_loaded()
 	var key := resolve_id(npc_id)
 	var doc: Dictionary = drops.get(key, {})
 	var groups: Array = doc.get("groups", [])
 	var out: Array = []
+	var adena_total := 0
 	for g in groups:
 		var gchance := float(g.get("chance", 0.0))
 		# L2J group chance is 0–100 percent.
@@ -126,10 +128,15 @@ static func roll_drops(npc_id: String) -> Array:
 		for it in pool:
 			acc += float(it.get("chance", 0.0))
 			if roll <= acc:
+				var item_id := str(it.get("item_id", ""))
 				var mn := int(it.get("min", 1))
 				var mx := int(it.get("max", 1))
 				var qty := mn if mx <= mn else randi_range(mn, mx)
-				for _i in range(qty):
-					out.append(str(it.get("item_id", "")))
+				if item_id == "57":
+					adena_total += qty
+				elif item_id != "":
+					out.append({"item_id": item_id, "count": qty})
 				break
+	if adena_total > 0:
+		out.append({"item_id": "57", "count": adena_total})
 	return out

@@ -327,8 +327,16 @@ func grant_xp(amount: int) -> Dictionary:
 	return {"leveled": leveled, "level": level, "xp": xp}
 
 
-func add_loot_item(item_id: String) -> void:
-	inventory.append(item_id)
+func add_loot_item(item_id: String, count: int = 1) -> void:
+	## Adena stacks into wallet + one bag slot; other items append (SS via quest helper).
+	if item_id == "57":
+		QuestEngine.give_adena(self, maxi(1, count))
+		return
+	if item_id == "5789":
+		QuestEngine.give_item(self, item_id, maxi(1, count))
+		return
+	for _i in range(maxi(1, count)):
+		inventory.append(item_id)
 
 
 func _server_equip_item_id(item_id: String) -> void:

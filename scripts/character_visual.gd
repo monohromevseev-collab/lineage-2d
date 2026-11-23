@@ -58,8 +58,9 @@ func _ensure_sprite() -> void:
 	_sprite = Sprite2D.new()
 	_sprite.name = "PixelBody"
 	_sprite.centered = true
-	_sprite.position = Vector2(0, -8)
+	_sprite.position = Vector2(0, -6)
 	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_sprite.scale = Vector2(0.85, 0.85)
 	add_child(_sprite)
 	_wing = Polygon2D.new()
 	_wing.name = "Wing"
