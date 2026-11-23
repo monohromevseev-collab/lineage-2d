@@ -39,9 +39,10 @@ var _respawn_timers: Dictionary = {}
 var _combat_log: PackedStringArray = PackedStringArray()
 
 const WORLD_HALF := Vector2(1400, 1000)
-const HUMAN_SPAWN := Vector2(-40, 70)
+## Cedric's Training Hall / library courtyard (unconfirmed playable placement).
+const HUMAN_SPAWN := Vector2(0, 40)
 const SPAWN_JITTER := [
-	Vector2(0, 0), Vector2(36, 12), Vector2(-30, 18), Vector2(20, -16), Vector2(-45, -8),
+	Vector2(0, 0), Vector2(28, 10), Vector2(-24, 14), Vector2(18, -12), Vector2(-32, -6),
 ]
 
 
@@ -241,7 +242,8 @@ func _start_network() -> void:
 
 func _spawn_all_mobs() -> void:
 	for entry in MobData.SPAWNS:
-		_create_mob_local(str(entry.template), entry.pos)
+		var aggro := float(entry.get("aggro_range", -1.0))
+		_create_mob_local(str(entry.template), entry.pos, aggro)
 	_spawn_friendly_npcs()
 
 
@@ -263,13 +265,18 @@ func _create_npc_local(npc_id: String, pos: Vector2) -> Node:
 	return n
 
 
-func _create_mob_local(template_id: String, pos: Vector2) -> Node:
+func _create_mob_local(template_id: String, pos: Vector2, aggro_override: float = -1.0) -> Node:
 	var id := _next_mob_id
 	_next_mob_id += 1
 	var m: Node = MOB_SCENE.instantiate()
 	m.name = "mob_%s" % id
 	mobs.add_child(m, true)
 	m.setup(id, template_id, pos)
+	if aggro_override >= 0.0:
+		m.aggro_range = aggro_override
+	# Library / tutorial Gremlins never first-strike.
+	if str(template_id) == "18342":
+		m.aggro_range = 0.0
 	return m
 
 
