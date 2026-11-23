@@ -31,8 +31,12 @@ static func take_item(player: Node, item_id: String, count: int = 1) -> bool:
 
 
 static func give_item(player: Node, item_id: String, count: int = 1) -> void:
+	# Adena is a single wallet counter + one bag slot (not N coin entries).
+	if item_id == "57":
+		give_adena(player, count)
+		return
 	# Stack high-count etc items (Soulshots) so the bag UI stays usable.
-	if item_id == "5789" or item_id == "57":
+	if item_id == "5789":
 		var key := "stack_%s" % item_id
 		player.quests[key] = int(player.quests.get(key, 0)) + count
 		if not has_item(player, item_id):
@@ -43,9 +47,35 @@ static func give_item(player: Node, item_id: String, count: int = 1) -> void:
 
 
 static func give_adena(player: Node, amount: int) -> void:
+	if amount < 0:
+		return
 	if not player.quests.has("adena"):
 		player.quests["adena"] = 0
-	player.quests["adena"] = int(player.quests["adena"]) + amount
+	# Collapse legacy per-coin bag rows into one wallet counter.
+	var loose := 0
+	var i := 0
+	while i < player.inventory.size():
+		if str(player.inventory[i]) == "57":
+			player.inventory.remove_at(i)
+			loose += 1
+		else:
+			i += 1
+	var wallet := int(player.quests["adena"])
+	# Loose rows from old loot never touched the wallet — fold them in once.
+	# While a single display slot exists with wallet>0, loose==1 is just that slot.
+	if loose > 0:
+		if wallet <= 0:
+			wallet += loose
+		elif loose > 1:
+			wallet += loose - 1
+	wallet += amount
+	player.quests["adena"] = wallet
+	if wallet > 0:
+		player.inventory.append("57")
+
+
+static func adena_count(player: Node) -> int:
+	return int(player.quests.get("adena", 0))
 
 
 static func objective_text(player: Node) -> String:

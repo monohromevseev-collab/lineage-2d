@@ -2,7 +2,7 @@
   "chronicle": "High Five",
   "datapack_url": "https://github.com/Shagooh/l2j-server-datapack.git",
   "datapack_commit": "03897cc4ee42361304fb5a96e59bb7fba174c0a8",
-  "slice": "talking_island_6a_plus_quests",
+  "slice": "cedric_library_starter",
   "npc_ids": [
     20481,
     20432,
@@ -41,7 +41,7 @@
     "offset_2d_x": -40.0,
     "offset_2d_y": 70.0,
     "status": "unconfirmed",
-    "note": "Hand-tuned projection so HF Talking_Island spawnlist samples fit WORLD_HALF meadow."
+    "note": "Hand-authored Cedric library origin + village path west; not geo-accurate HF projection."
   },
   "aliases": {
     "keltir": "20481",
@@ -62,11 +62,14 @@
     "spawn 2D projection scale/origin",
     "Human Fighter base_speed_px",
     "combat.phys_damage HF-lite formula (70*pAtk/pDef) \u2014 not full L2J Formulas.calcPhysDam",
-    "friendly NPC 2D positions (meadow placement vs Cedric/TI town)",
+    "friendly NPC 2D positions (Cedric hall / village path vs TI town)",
     "Q255 UX simplification (no radar/voice/tutorial window)",
     "Soulshot inventory without SS damage",
     "Roien SP\u2192XP stand-in (+50 XP)",
-    "Letters of Love SP not applied to character"
+    "Letters of Love SP not applied to character",
+    "Cedric library 2D layout (not geo HF map)",
+    "Village path / far wilds spawn distances hand-tuned",
+    "Pixel character sheets generated from L2 race ref (not client textures)"
   ],
   "unknown_fields": [],
   "quests": [

@@ -22,7 +22,7 @@ Talking Island **slice** only (not the full Aden client):
 | Items | `data/runtime/items.json` | `data/stats/items/*.xml` |
 | NPCs | `data/runtime/npcs.json` | `data/stats/npcs/*.xml` |
 | Drops | `data/runtime/drops.json` | NPC `<dropLists><death>` groups |
-| Spawns | `data/runtime/spawns.json` | `sql/spawnlist.sql` rows with location `Talking_Island` |
+| Spawns | `data/runtime/spawns.json` | Hand-authored Cedric library + village path (HF ids); see [`cedric-library.md`](cedric-library.md) |
 | Exp | `data/runtime/exp.json` | `data/stats/expData.json` |
 | Class | `data/runtime/classes.json` | `data/stats/chars/baseStats/HumanFighter.xml` |
 | Provenance | `data/runtime/meta.json` | URL + commit + unconfirmed list |
@@ -47,10 +47,10 @@ See `tools/hf_ingest/README.md`.
 Marked in `data/runtime/meta.json` → `unconfirmed` and on individual NPC fields:
 
 1. **XP per kill** — datapack gives `expRate` / `sp`, not a flat “kill XP” integer. Runtime uses `xp_reward = max(1, round(expRate))` (**unconfirmed** vs full L2J `Exp` formulas). Level thresholds themselves come from HF `expData.json` (**confirmed**).
-2. **2D spawn projection** — L2 `(x,y,z)` → meadow pixels with hand-tuned origin/scale (**unconfirmed**). Samples are real `Talking_Island` spawnlist rows.
-3. **Mob speed / aggro / pixel attack range / attack interval** — derived heuristics (**unconfirmed**). HP / pAtk / pDef from NPC XML are **confirmed**.
+2. **2D spawn projection** — L2 `(x,y,z)` → library / village-path pixels with hand-tuned layout (**unconfirmed**). Starter zone is Cedric hall with **only passive Gremlins**; wolves/orcs are farther west (**unconfirmed** distances).
+3. **Mob speed / aggro / pixel attack range / attack interval** — derived heuristics (**unconfirmed**). Library Gremlins force `aggro_range: 0`. HP / pAtk / pDef from NPC XML are **confirmed**.
 4. **Combat damage** — simplified `70 * pAtk / pDef` HF-lite (**unconfirmed**; not `Formulas.calcPhysDam`).
-5. **Player `base_speed_px`** — mapped from L2 run speed to meadow feel (**unconfirmed**). STR/DEX/CON/… and level HP/MP/CP gains from `HumanFighter.xml` are **confirmed**.
+5. **Player `base_speed_px`** — mapped from L2 run speed to playable feel (**unconfirmed**). STR/DEX/CON/… and level HP/MP/CP gains from `HumanFighter.xml` are **confirmed**.
 6. **Drop filter** — herbs and most materials/recipes/jewelry stripped for 6a (no herb/craft/jewelry systems). Remaining group chances are HF values (**confirmed** rates, filtered set).
 7. **Gloves / feet** — present in item JSON and equippable via bag / R; HUD still shows the four classic slots only.
 8. **No official NCSoft client files** — names/stats come from the L2J HF datapack, not a packet-sniffed retail dump.

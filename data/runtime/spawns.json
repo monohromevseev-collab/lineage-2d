@@ -1,303 +1,128 @@
 {
+  "projection": {
+    "note": "Hand-authored playable layout: Cedric Training Hall library as origin; village path west. Not geo-accurate HF projection.",
+    "status": "unconfirmed"
+  },
+  "zones": {
+    "cedric_library": {
+      "bounds": {"x_min": -160, "x_max": 220, "y_min": -140, "y_max": 200},
+      "mobs": ["18342"],
+      "aggro": "passive"
+    },
+    "village_path": {
+      "bounds": {"x_min": -750, "x_max": -420, "y_min": -180, "y_max": 120},
+      "mobs": ["20120"],
+      "note": "Wolves toward Talking Island Village path"
+    },
+    "far_wilds": {
+      "bounds": {"x_min": -1200, "x_max": -850, "y_min": -220, "y_max": 160},
+      "mobs": ["20130", "20006"],
+      "note": "Orcs farther west of village path"
+    }
+  },
   "spawns": [
     {
-      "npc_id": "20481",
-      "pos": {
-        "x": 286.9,
-        "y": 465.6
-      },
-      "l2": {
-        "x": -74661,
-        "y": 256302,
-        "z": -3128
-      },
+      "npc_id": "18342",
+      "pos": {"x": 70, "y": 90},
+      "zone": "cedric_library",
+      "aggro_range": 0,
+      "projection_status": "unconfirmed",
+      "note": "Tutorial Gremlin in Cedric hall courtyard"
+    },
+    {
+      "npc_id": "18342",
+      "pos": {"x": 110, "y": 70},
+      "zone": "cedric_library",
+      "aggro_range": 0,
       "projection_status": "unconfirmed"
     },
     {
-      "npc_id": "20481",
-      "pos": {
-        "x": 31.9,
-        "y": 150.4
-      },
-      "l2": {
-        "x": -81945,
-        "y": 247298,
-        "z": -3640
-      },
+      "npc_id": "18342",
+      "pos": {"x": 40, "y": 120},
+      "zone": "cedric_library",
+      "aggro_range": 0,
       "projection_status": "unconfirmed"
     },
     {
-      "npc_id": "20481",
-      "pos": {
-        "x": -273.2,
-        "y": -64.9
-      },
-      "l2": {
-        "x": -90663,
-        "y": 241147,
-        "z": -3504
-      },
+      "npc_id": "18342",
+      "pos": {"x": 95, "y": 130},
+      "zone": "cedric_library",
+      "aggro_range": 0,
       "projection_status": "unconfirmed"
     },
     {
-      "npc_id": "20432",
-      "pos": {
-        "x": 92.5,
-        "y": 112.6
-      },
-      "l2": {
-        "x": -80215,
-        "y": 246216,
-        "z": -3720
-      },
+      "npc_id": "18342",
+      "pos": {"x": 140, "y": 100},
+      "zone": "cedric_library",
+      "aggro_range": 0,
       "projection_status": "unconfirmed"
     },
     {
-      "npc_id": "20432",
-      "pos": {
-        "x": 26.5,
-        "y": 168.7
-      },
-      "l2": {
-        "x": -82100,
-        "y": 247820,
-        "z": -3648
-      },
+      "npc_id": "18342",
+      "pos": {"x": 55, "y": 55},
+      "zone": "cedric_library",
+      "aggro_range": 0,
       "projection_status": "unconfirmed"
     },
+
     {
-      "npc_id": "20432",
-      "pos": {
-        "x": -20.3,
-        "y": -119.8
-      },
-      "l2": {
-        "x": -83436,
-        "y": 239577,
-        "z": -3720
-      },
-      "projection_status": "unconfirmed"
+      "npc_id": "20120",
+      "pos": {"x": -520, "y": -40},
+      "zone": "village_path",
+      "l2": {"x": -82338, "y": 249868, "z": -3648},
+      "projection_status": "unconfirmed",
+      "note": "Wolf — far from library toward village"
     },
     {
-      "npc_id": "20544",
-      "pos": {
-        "x": 41.1,
-        "y": 197.4
-      },
-      "l2": {
-        "x": -81683,
-        "y": 248641,
-        "z": -3696
-      },
-      "projection_status": "unconfirmed"
-    },
-    {
-      "npc_id": "20544",
-      "pos": {
-        "x": -3.2,
-        "y": -126.6
-      },
-      "l2": {
-        "x": -82949,
-        "y": 239382,
-        "z": -3704
-      },
-      "projection_status": "unconfirmed"
-    },
-    {
-      "npc_id": "20544",
-      "pos": {
-        "x": -293.7,
-        "y": 43.0
-      },
-      "l2": {
-        "x": -91248,
-        "y": 244230,
-        "z": -3504
-      },
+      "npc_id": "20120",
+      "pos": {"x": -580, "y": 30},
+      "zone": "village_path",
       "projection_status": "unconfirmed"
     },
     {
       "npc_id": "20120",
-      "pos": {
-        "x": 18.2,
-        "y": 240.4
-      },
-      "l2": {
-        "x": -82338,
-        "y": 249868,
-        "z": -3648
-      },
+      "pos": {"x": -640, "y": -80},
+      "zone": "village_path",
       "projection_status": "unconfirmed"
     },
     {
       "npc_id": "20120",
-      "pos": {
-        "x": -242.9,
-        "y": -46.4
-      },
-      "l2": {
-        "x": -89796,
-        "y": 241674,
-        "z": -3568
-      },
+      "pos": {"x": -490, "y": 70},
+      "zone": "village_path",
       "projection_status": "unconfirmed"
     },
+
     {
-      "npc_id": "20120",
-      "pos": {
-        "x": -357.2,
-        "y": -254.9
-      },
-      "l2": {
-        "x": -93064,
-        "y": 235717,
-        "z": -3688
-      },
+      "npc_id": "20130",
+      "pos": {"x": -960, "y": -60},
+      "zone": "far_wilds",
+      "projection_status": "unconfirmed",
+      "note": "Orc — farther than wolves"
+    },
+    {
+      "npc_id": "20130",
+      "pos": {"x": -1020, "y": 40},
+      "zone": "far_wilds",
       "projection_status": "unconfirmed"
     },
     {
       "npc_id": "20130",
-      "pos": {
-        "x": -345.2,
-        "y": -89.4
-      },
-      "l2": {
-        "x": -92721,
-        "y": 240446,
-        "z": -3408
-      },
-      "projection_status": "unconfirmed"
-    },
-    {
-      "npc_id": "20130",
-      "pos": {
-        "x": -359.7,
-        "y": -249.2
-      },
-      "l2": {
-        "x": -93134,
-        "y": 235880,
-        "z": -3688
-      },
-      "projection_status": "unconfirmed"
-    },
-    {
-      "npc_id": "20130",
-      "pos": {
-        "x": -491.0,
-        "y": -148.7
-      },
-      "l2": {
-        "x": -96885,
-        "y": 238751,
-        "z": -3296
-      },
+      "pos": {"x": -1080, "y": -100},
+      "zone": "far_wilds",
       "projection_status": "unconfirmed"
     },
     {
       "npc_id": "20006",
-      "pos": {
-        "x": -651.6,
-        "y": 174.9
-      },
-      "l2": {
-        "x": -101473,
-        "y": 247996,
-        "z": -3424
-      },
-      "projection_status": "unconfirmed"
+      "pos": {"x": -1120, "y": 80},
+      "zone": "far_wilds",
+      "projection_status": "unconfirmed",
+      "note": "Orc Archer — far wilds"
     },
     {
       "npc_id": "20006",
-      "pos": {
-        "x": -501.2,
-        "y": -291.0
-      },
-      "l2": {
-        "x": -97176,
-        "y": 234686,
-        "z": -3544
-      },
+      "pos": {"x": -980, "y": 120},
+      "zone": "far_wilds",
       "projection_status": "unconfirmed"
-    },
-    {
-      "npc_id": "20006",
-      "pos": {
-        "x": -495.1,
-        "y": 385.7
-      },
-      "l2": {
-        "x": -97004,
-        "y": 254019,
-        "z": -3512
-      },
-      "projection_status": "unconfirmed"
-    },
-    {
-      "npc_id": "18342",
-      "pos": {
-        "x": 55,
-        "y": 95
-      },
-      "l2": {
-        "x": 0,
-        "y": 0,
-        "z": 0
-      },
-      "projection_status": "unconfirmed",
-      "note": "Tutorial Gremlin pocket near Newbie Helper (not from spawnlist; Cedric hall gremlins)."
-    },
-    {
-      "npc_id": "18342",
-      "pos": {
-        "x": 100,
-        "y": 80
-      },
-      "l2": {
-        "x": 0,
-        "y": 0,
-        "z": 0
-      },
-      "projection_status": "unconfirmed",
-      "note": "Tutorial Gremlin pocket near Newbie Helper (not from spawnlist; Cedric hall gremlins)."
-    },
-    {
-      "npc_id": "18342",
-      "pos": {
-        "x": 20,
-        "y": 110
-      },
-      "l2": {
-        "x": 0,
-        "y": 0,
-        "z": 0
-      },
-      "projection_status": "unconfirmed",
-      "note": "Tutorial Gremlin pocket near Newbie Helper (not from spawnlist; Cedric hall gremlins)."
-    },
-    {
-      "npc_id": "18342",
-      "pos": {
-        "x": 70,
-        "y": 130
-      },
-      "l2": {
-        "x": 0,
-        "y": 0,
-        "z": 0
-      },
-      "projection_status": "unconfirmed",
-      "note": "Tutorial Gremlin pocket near Newbie Helper (not from spawnlist; Cedric hall gremlins)."
     }
-  ],
-  "projection": {
-    "origin_l2_x": -84000,
-    "origin_l2_y": 245000,
-    "scale": 0.035,
-    "offset_2d_x": -40.0,
-    "offset_2d_y": 70.0,
-    "status": "unconfirmed",
-    "note": "Hand-tuned projection so HF Talking_Island spawnlist samples fit WORLD_HALF meadow."
-  }
+  ]
 }

@@ -16,6 +16,7 @@ var peer_id: int = 0
 var display_name: String = ""
 var bot_mode: bool = false
 var race: String = "human"
+var sex: String = "male"
 var class_id: String = "human_fighter"
 var level: int = 1
 var xp: int = 0
@@ -57,6 +58,7 @@ func setup(id: int, pname: String, world_half: Vector2) -> void:
 	_base = Combat.human_fighter_base()
 	race = str(_base.get("race", "human"))
 	class_id = str(_base.get("class_id", "human_fighter"))
+	sex = _guess_sex(pname)
 	equipped = Items.STARTER_LOADOUT.duplicate()
 	inventory = []
 	quests = QuestEngine.default_state()
@@ -69,6 +71,8 @@ func setup(id: int, pname: String, world_half: Vector2) -> void:
 	if _visual == null:
 		_visual = VISUAL_SCENE.instantiate()
 		visual_root.add_child(_visual)
+	if _visual.has_method("configure"):
+		_visual.configure(race, sex)
 	_refresh_visual()
 	_refresh_hp_bar()
 	if select_ring:
@@ -87,6 +91,11 @@ func set_display_name(pname: String) -> void:
 	display_name = pname
 	if name_label:
 		name_label.text = "%s  Lv%d" % [pname, level]
+	# Name often arrives after spawn (Player-id → Alice); re-apply sex sheet.
+	var next_sex := _guess_sex(pname)
+	if next_sex != sex:
+		sex = next_sex
+		_refresh_visual()
 
 
 func is_local_client() -> bool:
@@ -240,11 +249,15 @@ func apply_full_state(state: Dictionary) -> void:
 	target_npc_id = str(state.get("target_npc_id", target_npc_id))
 	engaged = bool(state.get("engaged", engaged))
 	quests = state.get("quests", quests)
+	race = str(state.get("race", race))
+	sex = str(state.get("sex", sex))
 	var f = state.get("facing", facing)
 	if typeof(f) == TYPE_VECTOR2:
 		facing = f
 	_moving = bool(state.get("moving", _moving))
 	set_display_name(display_name)
+	if _visual and _visual.has_method("configure"):
+		_visual.configure(race, sex)
 	_refresh_visual()
 	_refresh_hp_bar()
 	visible = alive
@@ -271,6 +284,7 @@ func snapshot() -> Dictionary:
 		"moving": _moving,
 		"display_name": display_name,
 		"race": race,
+		"sex": sex,
 	}
 
 
@@ -318,8 +332,16 @@ func grant_xp(amount: int) -> Dictionary:
 	return {"leveled": leveled, "level": level, "xp": xp}
 
 
-func add_loot_item(item_id: String) -> void:
-	inventory.append(item_id)
+func add_loot_item(item_id: String, count: int = 1) -> void:
+	## Adena stacks into wallet + one bag slot; other items append (SS via quest helper).
+	if item_id == "57":
+		QuestEngine.give_adena(self, maxi(1, count))
+		return
+	if item_id == "5789":
+		QuestEngine.give_item(self, item_id, maxi(1, count))
+		return
+	for _i in range(maxi(1, count)):
+		inventory.append(item_id)
 
 
 func _server_equip_item_id(item_id: String) -> void:
@@ -404,8 +426,20 @@ func _recalc_stats(reset_hp: bool) -> void:
 
 
 func _refresh_visual() -> void:
-	if _visual and _visual.has_method("apply_gear"):
+	if _visual == null:
+		return
+	if _visual.has_method("configure"):
+		_visual.configure(race, sex)
+	if _visual.has_method("apply_gear"):
 		_visual.apply_gear(equipped)
+
+
+func _guess_sex(pname: String) -> String:
+	## Demo heuristic until char-create UI ships. Explicit: Name_f / Name_female.
+	var n := pname.strip_edges().to_lower()
+	if n.ends_with("_f") or n.ends_with("_female") or n in ["alice", "roxxy", "elen"]:
+		return "female"
+	return "male"
 
 
 func _refresh_hp_bar() -> void:
@@ -431,6 +465,6 @@ func _physics_process(delta: float) -> void:
 
 
 func soft_bound(pos: Vector2) -> Vector2:
-	## Soft edge far from play — gentle push, not a wall in the meadow.
+	## Soft world edge — gentle push, not a hard wall at the library.
 	var m := _world_half * 0.98
 	return Vector2(clampf(pos.x, -m.x, m.x), clampf(pos.y, -m.y, m.y))

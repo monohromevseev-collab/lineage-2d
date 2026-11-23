@@ -3,14 +3,16 @@
 2D multiplayer prototype inspired by Lineage 2 (**High Five**).  
 Engine: **Godot 4.3** · authoritative dedicated server (ENet).
 
-## Current (quests + HF data)
+## Current (Cedric library + quests + HF data)
 
+- **Start zone**: Cedric's Training Hall / library (not open meadow)
+- **Starter mobs**: passive **Gremlins** only; wolves toward village path; orcs farther west
+- **Pixel Human Fighter** m/f sheets + race silhouette scaffolds
 - **HF Data Foundation** (6a): Talking Island runtime JSON + `DataRegistry`
 - **Newbie Helper tutorial (Q255)** + **Letters of Love (Q1)** with NPC dialogs and HF rewards
-- Tutorial Gremlins (**18342**), Blue Gemstone → Recommendation → Roien
 - Slice 2 UI/net kept: HUD, target→engage, minimap, walk anims
 
-See [`docs/hf-data-sources.md`](docs/hf-data-sources.md) and [`docs/hf-quests-ti.md`](docs/hf-quests-ti.md).
+See [`docs/cedric-library.md`](docs/cedric-library.md), [`docs/hf-data-sources.md`](docs/hf-data-sources.md), [`docs/hf-quests-ti.md`](docs/hf-quests-ti.md).
 
 ## Requirements
 
@@ -45,10 +47,10 @@ godot --path . --rendering-driver opengl3 -- --client --host 127.0.0.1 --port 77
 
 ## Suggested loop
 
-1. Spawn at the **talking stone** → click **Newbie Helper** → accept the Blue Gemstone mission.
-2. Kill nearby **Gremlin**s → turn in gem → talk to **Roien**.
-3. Hunt **Bearded Keltir / Elpy** → level 2 → **Darin** → Roxxy → Baulro → Darin.
-4. **E** loot → **I** equip → watch pAtk/pDef on the HUD.
+1. Spawn in **Cedric's library** → click **Newbie Helper** → accept the Blue Gemstone mission.
+2. Attack passive **Gremlin**s in the courtyard → turn in gem → talk to **Roien**.
+3. Level to 2 (Gremlins or walk west past wolves) → **Darin** → Roxxy → Baulro → Darin.
+4. **E** loot → **I** equip → watch gear tint on the pixel fighter.
 
 ## Layout
 
@@ -67,6 +69,7 @@ scenes/ scripts/ world, player, mob, NPC, HUD
 - **2** — HUD, target combat, seamless map, minimap, walk anims
 - **6a** — HF datapack ingest + DataRegistry (Talking Island slice)
 - **quests** — Newbie Helper / Gremlin tutorial + Letters of Love
+- **library** — Cedric hall start, passive Gremlins, distant wolves/orcs, pixel Human Fighter
 
 ## License
 

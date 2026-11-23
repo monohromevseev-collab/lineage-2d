@@ -6,9 +6,9 @@
     "type": "L2Npc",
     "source": "hf_datapack npc 30009",
     "status": "confirmed",
-    "pos": {"x": 40, "y": 40},
+    "pos": {"x": 20, "y": 20},
     "pos_status": "unconfirmed",
-    "pos_note": "Playable meadow placement near talking stone; HF spawn is Cedric's Training Hall (-71424,258336).",
+    "pos_note": "Cedric Training Hall placement; HF spawn (-71424, 258336).",
     "color": [0.85, 0.75, 0.35],
     "silhouette": "helper"
   },
@@ -19,9 +19,9 @@
     "type": "L2Npc",
     "source": "hf_datapack npc 30008",
     "status": "confirmed",
-    "pos": {"x": 90, "y": 10},
+    "pos": {"x": -30, "y": -10},
     "pos_status": "unconfirmed",
-    "pos_note": "Near Newbie Helper for Cedric hall flow; HF coords (-71384,258304).",
+    "pos_note": "Beside Helper in hall; HF (-71384, 258304).",
     "color": [0.55, 0.6, 0.85],
     "silhouette": "master"
   },
@@ -32,9 +32,9 @@
     "type": "L2Npc",
     "source": "hf_datapack npc 30048",
     "status": "confirmed",
-    "pos": {"x": -120, "y": 40},
+    "pos": {"x": -700, "y": -20},
     "pos_status": "unconfirmed",
-    "pos_note": "Projected near TI village; HF Talking_Island_Npc (-84436,242793).",
+    "pos_note": "Talking Island Village path; HF (-84436, 242793).",
     "color": [0.7, 0.55, 0.4],
     "silhouette": "villager"
   },
@@ -45,8 +45,9 @@
     "type": "L2Npc",
     "source": "hf_datapack npc 30006",
     "status": "confirmed",
-    "pos": {"x": -180, "y": -20},
+    "pos": {"x": -760, "y": -50},
     "pos_status": "unconfirmed",
+    "pos_note": "Village; HF (-84108, 244604).",
     "color": [0.75, 0.45, 0.55],
     "silhouette": "villager"
   },
@@ -57,8 +58,9 @@
     "type": "L2Npc",
     "source": "hf_datapack npc 30033",
     "status": "confirmed",
-    "pos": {"x": -90, "y": -50},
+    "pos": {"x": -720, "y": 40},
     "pos_status": "unconfirmed",
+    "pos_note": "Village; HF (-84729, 245001).",
     "color": [0.5, 0.45, 0.7],
     "silhouette": "mage"
   }

@@ -39,9 +39,10 @@ var _respawn_timers: Dictionary = {}
 var _combat_log: PackedStringArray = PackedStringArray()
 
 const WORLD_HALF := Vector2(1400, 1000)
-const HUMAN_SPAWN := Vector2(-40, 70)
+## Cedric's Training Hall / library courtyard (unconfirmed playable placement).
+const HUMAN_SPAWN := Vector2(0, 40)
 const SPAWN_JITTER := [
-	Vector2(0, 0), Vector2(36, 12), Vector2(-30, 18), Vector2(20, -16), Vector2(-45, -8),
+	Vector2(0, 0), Vector2(28, 10), Vector2(-24, 14), Vector2(18, -12), Vector2(-32, -6),
 ]
 
 
@@ -241,7 +242,8 @@ func _start_network() -> void:
 
 func _spawn_all_mobs() -> void:
 	for entry in MobData.SPAWNS:
-		_create_mob_local(str(entry.template), entry.pos)
+		var aggro := float(entry.get("aggro_range", -1.0))
+		_create_mob_local(str(entry.template), entry.pos, aggro)
 	_spawn_friendly_npcs()
 
 
@@ -263,13 +265,18 @@ func _create_npc_local(npc_id: String, pos: Vector2) -> Node:
 	return n
 
 
-func _create_mob_local(template_id: String, pos: Vector2) -> Node:
+func _create_mob_local(template_id: String, pos: Vector2, aggro_override: float = -1.0) -> Node:
 	var id := _next_mob_id
 	_next_mob_id += 1
 	var m: Node = MOB_SCENE.instantiate()
 	m.name = "mob_%s" % id
 	mobs.add_child(m, true)
 	m.setup(id, template_id, pos)
+	if aggro_override >= 0.0:
+		m.aggro_range = aggro_override
+	# Library / tutorial Gremlins never first-strike.
+	if str(template_id) == "18342":
+		m.aggro_range = 0.0
 	return m
 
 
@@ -285,7 +292,7 @@ func _on_peer_connected(id: int) -> void:
 	for n in npcs.get_children():
 		_spawn_npc.rpc_id(id, n.npc_id, n.position)
 	for d in loot.get_children():
-		_spawn_loot.rpc_id(id, d.drop_id, d.item_id, d.position)
+		_spawn_loot.rpc_id(id, d.drop_id, d.item_id, d.position, int(d.count) if "count" in d else 1)
 	var pos := _next_spawn()
 	var pname: String = str(_pending_names.get(id, "Player-%s" % id))
 	_spawn_player.rpc(id, pos, pname, {})
@@ -466,14 +473,14 @@ func _push_log_to(msg: String) -> void:
 
 
 @rpc("authority", "call_local", "reliable")
-func _spawn_loot(drop_id: int, item_id: String, pos: Vector2) -> void:
+func _spawn_loot(drop_id: int, item_id: String, pos: Vector2, amount: int = 1) -> void:
 	var key := "drop_%s" % drop_id
 	if loot.get_node_or_null(key):
 		return
 	var d: Node = LOOT_SCENE.instantiate()
 	d.name = key
 	loot.add_child(d, true)
-	d.setup(drop_id, item_id, pos)
+	d.setup(drop_id, item_id, pos, amount)
 
 
 @rpc("authority", "call_local", "reliable")
@@ -600,7 +607,10 @@ func _fx_level_up(peer_id: int, new_level: int) -> void:
 
 @rpc("authority", "call_local", "reliable")
 func _fx_loot(peer_id: int, item_id: String) -> void:
-	_push_log("%s looted %s" % [_name_of(peer_id), Items.display_name(item_id)])
+	var shown := item_id
+	if not item_id.begins_with("Adena"):
+		shown = Items.display_name(item_id)
+	_push_log("%s looted %s" % [_name_of(peer_id), shown])
 
 
 @rpc("authority", "call_local", "reliable")
@@ -666,16 +676,22 @@ func _on_mob_killed(player: Node, mob: Node) -> void:
 
 
 func _roll_loot(mob: Node) -> void:
-	# HF group-chance drop roll (Adena + equippables; herbs/materials filtered at ingest).
+	# HF group-chance drop roll — Adena comes as one stacked pile with count.
 	var dropped: Array = DataRegistry.roll_drops(str(mob.template_id))
-	for item_id_v in dropped:
-		var item_id: String = str(item_id_v)
+	for entry_v in dropped:
+		var item_id := ""
+		var count := 1
+		if typeof(entry_v) == TYPE_DICTIONARY:
+			item_id = str(entry_v.get("item_id", ""))
+			count = maxi(1, int(entry_v.get("count", 1)))
+		else:
+			item_id = str(entry_v)
 		if item_id == "":
 			continue
 		var drop_id := _next_drop_id
 		_next_drop_id += 1
 		var pos: Vector2 = mob.position + Vector2(randf_range(-18, 18), randf_range(-12, 12))
-		_spawn_loot.rpc(drop_id, item_id, pos)
+		_spawn_loot.rpc(drop_id, item_id, pos, count)
 
 
 func server_try_pickup(peer_id: int) -> void:
@@ -691,8 +707,12 @@ func server_try_pickup(peer_id: int) -> void:
 			best = d
 	if best == null:
 		return
-	player.add_loot_item(best.item_id)
-	_fx_loot.rpc(peer_id, best.item_id)
+	var amt: int = int(best.count) if "count" in best else 1
+	player.add_loot_item(best.item_id, amt)
+	var fx_name: String = str(best.item_id)
+	if best.item_id == "57":
+		fx_name = "Adena ×%d" % amt
+	_fx_loot.rpc(peer_id, fx_name)
 	_remove_loot.rpc(best.drop_id)
 
 

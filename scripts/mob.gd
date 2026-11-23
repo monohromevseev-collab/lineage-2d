@@ -53,6 +53,7 @@ func setup(id: int, template: String, pos: Vector2) -> void:
 	p_def = int(t.get("p_def", 4))
 	xp_reward = int(t.get("xp", 20))
 	move_speed = float(t.get("speed", 70.0))
+	# Passive by default in starter library (aggro 0); chase only after attacked.
 	aggro_range = float(t.get("aggro_range", 0.0))
 	attack_range = float(t.get("attack_range", 42.0))
 	attack_interval = float(t.get("attack_interval", 1.4))
