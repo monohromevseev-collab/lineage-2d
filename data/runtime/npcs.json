@@ -357,5 +357,49 @@
     ],
     "source": "hf_datapack",
     "status": "confirmed"
+  },
+  "18342": {
+    "id": 18342,
+    "name": "Gremlin",
+    "level": 1,
+    "type": "L2Monster",
+    "max_hp": 40,
+    "p_atk": 8,
+    "p_def": 44,
+    "exp_rate": 29.39,
+    "sp": 2,
+    "xp_reward": 29,
+    "xp_reward_status": "unconfirmed",
+    "xp_reward_note": "approx round(expRate); tutorial gem drop is scripted separately",
+    "speed": 50.0,
+    "speed_status": "unconfirmed",
+    "aggro_range": 0.0,
+    "aggro_range_status": "unconfirmed",
+    "attack_range": 42.0,
+    "attack_range_status": "unconfirmed",
+    "attack_interval": 1.4,
+    "attack_interval_status": "unconfirmed",
+    "silhouette": "fox",
+    "color": [
+      0.35,
+      0.7,
+      0.4
+    ],
+    "drop_groups": [
+      {
+        "chance": 100.0,
+        "items": [
+          {
+            "item_id": "57",
+            "min": 7,
+            "max": 13,
+            "chance": 100.0
+          }
+        ]
+      }
+    ],
+    "source": "hf_datapack Tutorial Gremlin 18342",
+    "status": "confirmed",
+    "tutorial": true
   }
 }

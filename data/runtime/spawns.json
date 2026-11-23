@@ -233,6 +233,62 @@
         "z": -3512
       },
       "projection_status": "unconfirmed"
+    },
+    {
+      "npc_id": "18342",
+      "pos": {
+        "x": 55,
+        "y": 95
+      },
+      "l2": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "projection_status": "unconfirmed",
+      "note": "Tutorial Gremlin pocket near Newbie Helper (not from spawnlist; Cedric hall gremlins)."
+    },
+    {
+      "npc_id": "18342",
+      "pos": {
+        "x": 100,
+        "y": 80
+      },
+      "l2": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "projection_status": "unconfirmed",
+      "note": "Tutorial Gremlin pocket near Newbie Helper (not from spawnlist; Cedric hall gremlins)."
+    },
+    {
+      "npc_id": "18342",
+      "pos": {
+        "x": 20,
+        "y": 110
+      },
+      "l2": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "projection_status": "unconfirmed",
+      "note": "Tutorial Gremlin pocket near Newbie Helper (not from spawnlist; Cedric hall gremlins)."
+    },
+    {
+      "npc_id": "18342",
+      "pos": {
+        "x": 70,
+        "y": 130
+      },
+      "l2": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "projection_status": "unconfirmed",
+      "note": "Tutorial Gremlin pocket near Newbie Helper (not from spawnlist; Cedric hall gremlins)."
     }
   ],
   "projection": {

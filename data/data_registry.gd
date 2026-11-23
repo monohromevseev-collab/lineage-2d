@@ -13,6 +13,9 @@ static var spawns: Array = []
 static var exp_table: Dictionary = {}
 static var classes: Dictionary = {}
 static var aliases: Dictionary = {}
+static var quests: Dictionary = {}
+static var friendly_npcs: Dictionary = {}
+static var dialogs: Dictionary = {}
 
 
 static func ensure_loaded() -> void:
@@ -26,10 +29,13 @@ static func ensure_loaded() -> void:
 	spawns = spawn_doc.get("spawns", [])
 	exp_table = _read_json("%s/exp.json" % RUNTIME_DIR)
 	classes = _read_json("%s/classes.json" % RUNTIME_DIR)
+	quests = _read_json("%s/quests.json" % RUNTIME_DIR)
+	friendly_npcs = _read_json("%s/friendly_npcs.json" % RUNTIME_DIR)
+	dialogs = _read_json("%s/dialogs.json" % RUNTIME_DIR)
 	aliases = meta.get("aliases", {})
 	_loaded = true
-	print("[data] HF runtime loaded: %d items, %d npcs, %d spawns (commit %s)" % [
-		items.size(), npcs.size(), spawns.size(), str(meta.get("datapack_commit", "?"))
+	print("[data] HF runtime loaded: %d items, %d npcs, %d spawns, %d quests (commit %s)" % [
+		items.size(), npcs.size(), spawns.size(), quests.size(), str(meta.get("datapack_commit", "?"))
 	])
 
 
@@ -71,6 +77,16 @@ static func get_npc(npc_id: String) -> Dictionary:
 static func get_char_class(class_id: String = "0") -> Dictionary:
 	ensure_loaded()
 	return classes.get(class_id, {})
+
+
+static func get_quest(quest_id: String) -> Dictionary:
+	ensure_loaded()
+	return quests.get(quest_id, {})
+
+
+static func get_friendly_npc(npc_id: String) -> Dictionary:
+	ensure_loaded()
+	return friendly_npcs.get(npc_id, {})
 
 
 static func xp_to_next(level: int) -> int:

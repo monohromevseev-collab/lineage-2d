@@ -2,7 +2,7 @@
   "chronicle": "High Five",
   "datapack_url": "https://github.com/Shagooh/l2j-server-datapack.git",
   "datapack_commit": "03897cc4ee42361304fb5a96e59bb7fba174c0a8",
-  "slice": "talking_island_6a",
+  "slice": "talking_island_6a_plus_quests",
   "npc_ids": [
     20481,
     20432,
@@ -61,7 +61,16 @@
     "npc.speed / aggro_range / attack_range_px / attack_interval",
     "spawn 2D projection scale/origin",
     "Human Fighter base_speed_px",
-    "combat.phys_damage HF-lite formula (70*pAtk/pDef) — not full L2J Formulas.calcPhysDam"
+    "combat.phys_damage HF-lite formula (70*pAtk/pDef) \u2014 not full L2J Formulas.calcPhysDam",
+    "friendly NPC 2D positions (meadow placement vs Cedric/TI town)",
+    "Q255 UX simplification (no radar/voice/tutorial window)",
+    "Soulshot inventory without SS damage",
+    "Roien SP\u2192XP stand-in (+50 XP)",
+    "Letters of Love SP not applied to character"
   ],
-  "unknown_fields": []
+  "unknown_fields": [],
+  "quests": [
+    "255",
+    "1"
+  ]
 }

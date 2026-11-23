@@ -3,14 +3,14 @@
 2D multiplayer prototype inspired by Lineage 2 (**High Five**).  
 Engine: **Godot 4.3** · authoritative dedicated server (ENet).
 
-## Slice 6a (current)
+## Current (quests + HF data)
 
-- **HF Data Foundation**: Talking Island runtime JSON from an L2J High Five datapack
-- `DataRegistry` loads `data/runtime/*.json` (items, NPCs, drops, spawns, exp, Human Fighter)
-- Toy tables replaced: real HF ids (e.g. Bearded Keltir **20481**, Short Sword **1**)
-- Slice 2 UI/net kept: HUD, target→engage, minimap, walk anims, authoritative combat
+- **HF Data Foundation** (6a): Talking Island runtime JSON + `DataRegistry`
+- **Newbie Helper tutorial (Q255)** + **Letters of Love (Q1)** with NPC dialogs and HF rewards
+- Tutorial Gremlins (**18342**), Blue Gemstone → Recommendation → Roien
+- Slice 2 UI/net kept: HUD, target→engage, minimap, walk anims
 
-See [`docs/hf-data-sources.md`](docs/hf-data-sources.md) for datapack URL/commit and unconfirmed fields.
+See [`docs/hf-data-sources.md`](docs/hf-data-sources.md) and [`docs/hf-quests-ti.md`](docs/hf-quests-ti.md).
 
 ## Requirements
 
@@ -23,15 +23,16 @@ See [`docs/hf-data-sources.md`](docs/hf-data-sources.md) for datapack URL/commit
 | Input | Action |
 |-------|--------|
 | WASD / arrows | Move (walk anim) |
-| LMB | Select mob under cursor (empty ground clears target) |
+| LMB | Select mob or **NPC** (talk opens dialog) |
 | Tab | Cycle target |
-| F / Space / Attack skill (bar) | Toggle engage on **current target** |
+| F / Space / Attack skill | Toggle engage on current mob |
+| Talk button | Re-open dialog with selected NPC |
 | Esc | Clear target / stop attack |
 | E | Pick up nearest loot |
-| I / Bag button | Inventory (click item icons to equip) |
-| M / Map button | Full map |
+| I / Bag | Inventory |
+| M / Map | Full map |
 | R | Equip best upgrades from bag |
-| 1–4 | Equip first bag item into weapon / chest / legs / head |
+| 1–4 | Equip into weapon / chest / legs / head |
 
 ## Run locally
 
@@ -40,32 +41,23 @@ godot --path . --headless -- --server --port 7777
 godot --path . --rendering-driver opengl3 -- --client --host 127.0.0.1 --port 7777 --name Alice
 ```
 
-> Keep `--rendering-driver opengl3` on VMs without Vulkan. Project defaults to GL Compatibility.
-
-### CLI flags (after `--`)
-
-| Flag | Meaning |
-|------|---------|
-| `--server` / `--client` | Role |
-| `--host` / `--port` | Connect |
-| `--name` | Display name |
-| `--bot` | Auto hunt smoke test |
+> Keep `--rendering-driver opengl3` on VMs without Vulkan.
 
 ## Suggested loop
 
-1. Spawn at the glowing **talking stone** (Short Sword + Squire shirt/pants).
-2. Hunt **Bearded Keltir / Elpy** nearby → engage with **F**.
-3. XP follows the HF exp table; loot uses HF death-drop group chances (Adena + gear; herbs filtered).
-4. **E** loot → **I** / click to equip → pAtk/pDef on the HUD update.
+1. Spawn at the **talking stone** → click **Newbie Helper** → accept the Blue Gemstone mission.
+2. Kill nearby **Gremlin**s → turn in gem → talk to **Roien**.
+3. Hunt **Bearded Keltir / Elpy** → level 2 → **Darin** → Roxxy → Baulro → Darin.
+4. **E** loot → **I** equip → watch pAtk/pDef on the HUD.
 
 ## Layout
 
 ```
-data/runtime/    HF JSON (items, npcs, drops, spawns, exp, classes)
-data/*.gd        DataRegistry + thin wrappers + combat helpers
+data/runtime/    HF JSON (items, npcs, quests, dialogs, …)
+data/*.gd        DataRegistry, quest engine, combat helpers
 tools/hf_ingest/ L2J HF → JSON converter
-docs/            hf-data-sources.md
-scenes/ scripts/ world, player, mob, loot, HUD
+docs/            data sources + quest notes
+scenes/ scripts/ world, player, mob, NPC, HUD
 ```
 
 ## Slice history
@@ -74,7 +66,8 @@ scenes/ scripts/ world, player, mob, loot, HUD
 - **1** — combat / XP / loot / layered gear
 - **2** — HUD, target combat, seamless map, minimap, walk anims
 - **6a** — HF datapack ingest + DataRegistry (Talking Island slice)
+- **quests** — Newbie Helper / Gremlin tutorial + Letters of Love
 
 ## License
 
-Prototype / work in progress. Datapack rights remain with their upstream L2J authors; we only ship a narrow generated JSON slice.
+Prototype / work in progress. Datapack rights remain with their upstream L2J authors.

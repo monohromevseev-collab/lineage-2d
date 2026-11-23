@@ -1,0 +1,131 @@
+{
+  "30009": {
+    "not_started": {
+      "text": "Welcome! Are you ready for a mission?\n\nHave you seen the Gremlins around here? They've stolen the precious Blue Gemstone!\n\nYou must recover it from them!\n\nPlace your cursor over a Gremlin and attack. Complete this mission and I'll reward you with useful items. Good luck!",
+      "source": "30009-001.htm",
+      "choices": [
+        {"id": "accept_gem", "label": "I'll recover the Blue Gemstone."}
+      ]
+    },
+    "hunt_gremlin": {
+      "text": "Did you forget what to do? Get a blue gem! You must kill Gremlins to get a blue gem.\n\nKill, kill, kill the Gremlins!",
+      "source": "30009-002.htm",
+      "choices": [{"id": "close", "label": "I'll keep hunting."}]
+    },
+    "return_helper": {
+      "text": "You got a blue gem! Right On!\n\nAs promised, here are Soulshots for beginners and a Recommendation. Take the Recommendation to Grand Master Roien — he's eager to meet you.",
+      "source": "30009-003.htm",
+      "choices": [{"id": "turn_in_gem", "label": "Hand over the Blue Gemstone."}]
+    },
+    "see_roien": {
+      "text": "Speak with Grand Master Roien over there. He's eager to meet you. He has a gift for you.\n\nMay the goddess of luck be with you!",
+      "source": "30009-004.htm",
+      "choices": [{"id": "close", "label": "Understood."}]
+    },
+    "completed": {
+      "text": "You're doing well. Seek Darin in the village when you reach level 2 — he needs help with a letter.",
+      "source": "30009-005.htm (adapted)",
+      "status": "adapted",
+      "choices": [{"id": "close", "label": "Thanks."}]
+    }
+  },
+  "30008": {
+    "need_reco": {
+      "text": "Welcome. I am Grand Master Roien, of Sedrick's Training Hall.\n\nDid you get the Recommendation from the Newbie Helper?",
+      "source": "30008-001.htm",
+      "choices": [
+        {"id": "give_reco", "label": "I brought the Recommendation."},
+        {"id": "close", "label": "Not yet."}
+      ]
+    },
+    "no_reco": {
+      "text": "Speak with the Newbie Helper first. Complete the Blue Gemstone task, then return with a Recommendation.",
+      "source": "30008-003.htm (adapted)",
+      "status": "adapted",
+      "choices": [{"id": "close", "label": "Yes, Grand Master."}]
+    },
+    "after": {
+      "text": "You have learned the basic operations of the game well. From here on out, you will be able to really enjoy the adventure!\n\nTake this gift. You may continue exploring Talking Island.",
+      "source": "30008-002.htm (Kamael teleport option omitted)",
+      "status": "adapted_no_kamael_teleport",
+      "choices": [{"id": "close", "label": "I will adventure on Talking Island."}]
+    }
+  },
+  "30048": {
+    "too_low": {
+      "text": "Come back when you're a bit more experienced (level 2). Love waits for no one — but I can.",
+      "source": "30048-01.html (adapted)",
+      "status": "adapted",
+      "choices": [{"id": "close", "label": "I'll return later."}]
+    },
+    "available": {
+      "text": "What's more dangerous than a Knight's sword or a Wizard's staff? That thing we call love!\n\nI am in love with Roxxy. Will you help me?",
+      "source": "30048-02.html / 30048-03.html",
+      "choices": [
+        {"id": "start_lol", "label": "I'll deliver your letter."},
+        {"id": "close", "label": "Not now."}
+      ]
+    },
+    "cond_1": {
+      "text": "Please give Roxxy my letter. You'll find her near the village path. Hurry — my nerves can't stand the strain!",
+      "source": "30048-07.html",
+      "choices": [{"id": "close", "label": "On my way."}]
+    },
+    "cond_2": {
+      "text": "She sent a handkerchief? Wonderful! Please take this receipt to Magister Baulro for the potion I ordered.",
+      "source": "30048-08.html",
+      "choices": [{"id": "turn_kerchief", "label": "Give Roxxy's Kerchief."}]
+    },
+    "cond_3": {
+      "text": "Baulro should have the potion ready. Please hurry!",
+      "source": "30048-09.html",
+      "choices": [{"id": "close", "label": "I'll find Baulro."}]
+    },
+    "cond_4": {
+      "text": "You brought the potion? Thank you! Please accept this small gift — a Necklace of Knowledge — and my undying thanks!",
+      "source": "30048-10.html",
+      "choices": [{"id": "finish_lol", "label": "Hand over Baulro's Potion."}]
+    },
+    "done": {
+      "text": "Thanks to you, I finally found the courage to speak with Roxxy.",
+      "source": "already completed",
+      "choices": [{"id": "close", "label": "Farewell."}]
+    }
+  },
+  "30006": {
+    "need_letter": {
+      "text": "A letter...for me? From Darin? Oh my — please give Darin my handkerchief as a pledge of my affection!",
+      "source": "30006-01.html",
+      "choices": [{"id": "give_letter", "label": "Deliver Darin's Letter."}]
+    },
+    "waiting": {
+      "text": "Please tell Darin not to waste any more time.",
+      "source": "30006-02.html",
+      "choices": [{"id": "close", "label": "I will."}]
+    },
+    "idle": {
+      "text": "Welcome to Talking Island. Safe travels.",
+      "source": "adapted gatekeeper greeting",
+      "status": "adapted",
+      "choices": [{"id": "close", "label": "Goodbye."}]
+    }
+  },
+  "30033": {
+    "need_receipt": {
+      "text": "Darin sent you, eh? Here's the \"magic potion\" he ordered. Take it to him — and not a word about the ingredients!",
+      "source": "30033-01.html",
+      "choices": [{"id": "give_receipt", "label": "Present Darin's Receipt."}]
+    },
+    "waiting": {
+      "text": "You've already got the potion. Don't keep Darin waiting.",
+      "source": "30033-02.html",
+      "choices": [{"id": "close", "label": "Right away."}]
+    },
+    "idle": {
+      "text": "Magic and courage both require practice. Come back when Darin sends you.",
+      "source": "adapted",
+      "status": "adapted",
+      "choices": [{"id": "close", "label": "Understood."}]
+    }
+  }
+}

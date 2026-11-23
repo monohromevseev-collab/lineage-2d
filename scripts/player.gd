@@ -3,6 +3,7 @@ extends CharacterBody2D
 
 const Items := preload("res://data/items.gd")
 const Combat := preload("res://data/combat.gd")
+const QuestEngine := preload("res://data/quest_engine.gd")
 const VISUAL_SCENE := preload("res://scenes/character_visual.tscn")
 
 @onready var name_label: Label = $NameLabel
@@ -25,7 +26,9 @@ var alive: bool = true
 var stats: Dictionary = {}
 var equipped: Dictionary = {}
 var inventory: Array = []
+var quests: Dictionary = {}
 var target_mob_id: int = 0
+var target_npc_id: String = ""  ## friendly NPC template id when selected
 var engaged: bool = false  ## attacking selected target (L2-style after Attack skill)
 var facing: Vector2 = Vector2.RIGHT
 
@@ -56,10 +59,12 @@ func setup(id: int, pname: String, world_half: Vector2) -> void:
 	class_id = str(_base.get("class_id", "human_fighter"))
 	equipped = Items.STARTER_LOADOUT.duplicate()
 	inventory = []
+	quests = QuestEngine.default_state()
 	level = 1
 	xp = 0
 	engaged = false
 	target_mob_id = 0
+	target_npc_id = ""
 	_recalc_stats(true)
 	if _visual == null:
 		_visual = VISUAL_SCENE.instantiate()
@@ -99,20 +104,19 @@ func poll_input(delta: float) -> Dictionary:
 	var equip_slot := ""
 	if bot_mode:
 		_bot_phase += delta
-		# TI HF pocket: Elpy / Bearded Keltir near talking stone (projected spawns).
-		var hunt := Vector2(-20, 120)
+		# Hunt Tutorial Gremlins near Newbie Helper, then Elpy pocket.
+		var hunt := Vector2(55, 95) if _bot_phase < 25.0 else Vector2(-20, 120)
 		var to_hunt := hunt - position
 		if to_hunt.length() > 48.0:
 			dir = to_hunt.normalized()
 			_bot_did_attack = false
 		else:
 			dir = (hunt - position).normalized() * 0.2
-			# One-shot engage when arriving in the hunting pocket.
 			if not _bot_did_attack:
 				attack_press = true
 				_bot_did_attack = true
 			elif fmod(_bot_phase, 6.0) < delta:
-				attack_press = true  # re-engage if needed
+				attack_press = true
 		pickup = fmod(_bot_phase, 2.0) < delta
 		if fmod(_bot_phase, 5.0) < delta:
 			equip_slot = "auto"
@@ -233,7 +237,9 @@ func apply_full_state(state: Dictionary) -> void:
 	inventory = state.get("inventory", inventory)
 	stats = state.get("stats", stats)
 	target_mob_id = int(state.get("target_mob_id", target_mob_id))
+	target_npc_id = str(state.get("target_npc_id", target_npc_id))
 	engaged = bool(state.get("engaged", engaged))
+	quests = state.get("quests", quests)
 	var f = state.get("facing", facing)
 	if typeof(f) == TYPE_VECTOR2:
 		facing = f
@@ -256,8 +262,10 @@ func snapshot() -> Dictionary:
 		"alive": alive,
 		"equipped": equipped.duplicate(),
 		"inventory": inventory.duplicate(),
+		"quests": quests.duplicate(true),
 		"stats": stats.duplicate(),
 		"target_mob_id": target_mob_id,
+		"target_npc_id": target_npc_id,
 		"engaged": engaged,
 		"facing": facing,
 		"moving": _moving,
@@ -338,7 +346,7 @@ func _server_try_equip(slot_or_auto: String) -> void:
 
 
 func _equip_best_from_inventory() -> void:
-	for slot in [Items.SLOT_WEAPON, Items.SLOT_CHEST, Items.SLOT_LEGS, Items.SLOT_HEAD, Items.SLOT_GLOVES, Items.SLOT_FEET]:
+	for slot in [Items.SLOT_WEAPON, Items.SLOT_CHEST, Items.SLOT_LEGS, Items.SLOT_HEAD, Items.SLOT_GLOVES, Items.SLOT_FEET, Items.SLOT_NECK]:
 		var best_i := -1
 		var best_score := -1
 		for i in range(inventory.size()):

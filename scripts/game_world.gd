@@ -3,10 +3,12 @@ extends Node2D
 
 const PLAYER_SCENE := preload("res://scenes/player.tscn")
 const MOB_SCENE := preload("res://scenes/mob.tscn")
+const NPC_SCENE := preload("res://scenes/npc_friendly.tscn")
 const LOOT_SCENE := preload("res://scenes/loot_drop.tscn")
 const HUD_SCRIPT := preload("res://scripts/ui/game_hud.gd")
 const NetConfig := preload("res://scripts/net_config.gd")
 const DataRegistry := preload("res://data/data_registry.gd")
+const QuestEngine := preload("res://data/quest_engine.gd")
 const MobData := preload("res://data/mobs.gd")
 const Items := preload("res://data/items.gd")
 const Combat := preload("res://data/combat.gd")
@@ -14,6 +16,7 @@ const Combat := preload("res://data/combat.gd")
 const SYNC_HZ := 20.0
 const ATTACK_RANGE := 56.0
 const PICKUP_RANGE := 52.0
+const TALK_RANGE := 72.0
 const MOB_RESPAWN := 14.0
 const CLICK_SELECT_RADIUS := 36.0
 
@@ -21,6 +24,7 @@ const CLICK_SELECT_RADIUS := 36.0
 
 @onready var players: Node2D = $Players
 @onready var mobs: Node2D = $Mobs
+@onready var npcs: Node2D = $Npcs
 @onready var loot: Node2D = $Loot
 
 var game_hud: CanvasLayer
@@ -67,6 +71,8 @@ func _setup_hud() -> void:
 	game_hud.inventory_toggled.connect(_on_hud_inv)
 	game_hud.map_toggled.connect(_on_hud_map)
 	game_hud.equip_item.connect(_on_hud_equip)
+	game_hud.dialog_choice.connect(_on_hud_dialog_choice)
+	game_hud.talk_pressed.connect(_on_hud_talk)
 
 
 func _physics_process(delta: float) -> void:
@@ -93,6 +99,9 @@ func _physics_process(delta: float) -> void:
 	for m in mobs.get_children():
 		if m.has_method("set_selected"):
 			m.set_selected(m.mob_id == me.target_mob_id)
+	for n in npcs.get_children():
+		if n.has_method("set_selected"):
+			n.set_selected(str(n.npc_id) == str(me.target_npc_id))
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -134,13 +143,34 @@ func _client_click_select(me: Node, screen_pos: Vector2) -> bool:
 			best = m
 	if best:
 		me.target_mob_id = best.mob_id
+		me.target_npc_id = ""
 		me.engaged = false
 		_request_target.rpc_id(1, best.mob_id, false)
+		_request_npc_target.rpc_id(1, "")
+		return true
+	# Friendly NPCs
+	var best_npc: Node = null
+	var best_nd := CLICK_SELECT_RADIUS
+	for n in npcs.get_children():
+		var d2: float = world_pos.distance_to(n.position)
+		if d2 < best_nd:
+			best_nd = d2
+			best_npc = n
+	if best_npc:
+		me.target_mob_id = 0
+		me.target_npc_id = best_npc.npc_id
+		me.engaged = false
+		_request_target.rpc_id(1, 0, false)
+		_request_npc_target.rpc_id(1, best_npc.npc_id)
+		_request_talk.rpc_id(1, best_npc.npc_id)
 		return true
 	# Click empty — clear target
 	me.target_mob_id = 0
+	me.target_npc_id = ""
 	me.engaged = false
 	_request_target.rpc_id(1, 0, false)
+	_request_npc_target.rpc_id(1, "")
+	game_hud.close_dialog()
 	return true
 
 
@@ -161,6 +191,17 @@ func _on_hud_map() -> void:
 
 func _on_hud_equip(item_id: String) -> void:
 	_request_equip_item.rpc_id(1, item_id)
+
+
+func _on_hud_talk() -> void:
+	var me := players.get_node_or_null(str(multiplayer.get_unique_id()))
+	if me == null or str(me.target_npc_id) == "":
+		return
+	_request_talk.rpc_id(1, str(me.target_npc_id))
+
+
+func _on_hud_dialog_choice(choice_id: String) -> void:
+	_request_dialog_choice.rpc_id(1, choice_id)
 
 
 func _server_simulate(delta: float) -> void:
@@ -201,6 +242,25 @@ func _start_network() -> void:
 func _spawn_all_mobs() -> void:
 	for entry in MobData.SPAWNS:
 		_create_mob_local(str(entry.template), entry.pos)
+	_spawn_friendly_npcs()
+
+
+func _spawn_friendly_npcs() -> void:
+	for npc_id in DataRegistry.friendly_npcs.keys():
+		var t: Dictionary = DataRegistry.friendly_npcs[npc_id]
+		var pos_doc: Dictionary = t.get("pos", {})
+		var pos := Vector2(float(pos_doc.get("x", 0.0)), float(pos_doc.get("y", 0.0)))
+		_create_npc_local(str(npc_id), pos)
+
+
+func _create_npc_local(npc_id: String, pos: Vector2) -> Node:
+	if npcs.get_node_or_null(npc_id):
+		return npcs.get_node(npc_id)
+	var n: Node = NPC_SCENE.instantiate()
+	n.name = npc_id
+	npcs.add_child(n, true)
+	n.setup(npc_id, pos)
+	return n
 
 
 func _create_mob_local(template_id: String, pos: Vector2) -> Node:
@@ -222,6 +282,8 @@ func _on_peer_connected(id: int) -> void:
 		_spawn_player.rpc_id(id, pid, child.position, child.display_name, child.snapshot())
 	for m in mobs.get_children():
 		_spawn_mob.rpc_id(id, m.mob_id, m.template_id, m.position, m.hp, m.alive)
+	for n in npcs.get_children():
+		_spawn_npc.rpc_id(id, n.npc_id, n.position)
 	for d in loot.get_children():
 		_spawn_loot.rpc_id(id, d.drop_id, d.item_id, d.position)
 	var pos := _next_spawn()
@@ -318,6 +380,89 @@ func _spawn_mob(mob_id: int, template_id: String, pos: Vector2, hp: int, is_aliv
 	m.alive = is_alive
 	m.visible = is_alive
 	m._refresh_hp()
+
+
+@rpc("authority", "call_local", "reliable")
+func _spawn_npc(npc_id: String, pos: Vector2) -> void:
+	_create_npc_local(npc_id, pos)
+
+
+@rpc("any_peer", "reliable")
+func _request_npc_target(npc_id: String) -> void:
+	if not multiplayer.is_server():
+		return
+	var sender := multiplayer.get_remote_sender_id()
+	var p := players.get_node_or_null(str(sender))
+	if p == null:
+		return
+	p.target_npc_id = npc_id
+	if npc_id != "":
+		p.target_mob_id = 0
+		p.engaged = false
+
+
+@rpc("any_peer", "reliable")
+func _request_talk(npc_id: String) -> void:
+	if not multiplayer.is_server():
+		return
+	var sender := multiplayer.get_remote_sender_id()
+	var p := players.get_node_or_null(str(sender))
+	if p == null or not p.alive:
+		return
+	var npc := npcs.get_node_or_null(npc_id)
+	if npc == null:
+		return
+	if p.position.distance_to(npc.position) > TALK_RANGE:
+		_push_log_to.rpc_id(sender, "Too far to talk.")
+		return
+	p.target_npc_id = npc_id
+	var dlg: Dictionary = QuestEngine.dialog_for(npc_id, p)
+	_open_dialog.rpc_id(sender, npc_id, str(npc.display_name), dlg)
+
+
+@rpc("any_peer", "reliable")
+func _request_dialog_choice(choice_id: String) -> void:
+	if not multiplayer.is_server():
+		return
+	var sender := multiplayer.get_remote_sender_id()
+	var p := players.get_node_or_null(str(sender))
+	if p == null or str(p.target_npc_id) == "":
+		return
+	var npc_id: String = str(p.target_npc_id)
+	var result: Dictionary = QuestEngine.apply_choice(npc_id, choice_id, p)
+	if str(result.get("log", "")) != "":
+		var line := "%s: %s" % [p.display_name, str(result.log)]
+		_push_log(line)
+		_push_log_to.rpc_id(sender, line)
+	if result.has("leveled") and bool(result.leveled.get("leveled", false)):
+		_fx_level_up.rpc(sender, int(result.leveled.level))
+	if bool(result.get("close", false)):
+		_close_dialog.rpc_id(sender)
+	else:
+		var dlg: Dictionary = QuestEngine.dialog_for(npc_id, p)
+		var npc := npcs.get_node_or_null(npc_id)
+		var nname: String = str(npc.display_name) if npc else npc_id
+		_open_dialog.rpc_id(sender, npc_id, nname, dlg)
+
+
+@rpc("authority", "reliable")
+func _open_dialog(npc_id: String, npc_name: String, dlg: Dictionary) -> void:
+	if game_hud:
+		game_hud.show_dialog(npc_id, npc_name, dlg)
+
+
+@rpc("authority", "reliable")
+func _close_dialog() -> void:
+	if game_hud:
+		game_hud.close_dialog()
+
+
+@rpc("authority", "reliable")
+func _push_log_to(msg: String) -> void:
+	if game_hud and game_hud.has_method("push_log"):
+		game_hud.push_log(msg)
+	else:
+		_push_log(msg)
 
 
 @rpc("authority", "call_local", "reliable")
@@ -511,6 +656,11 @@ func _on_mob_killed(player: Node, mob: Node) -> void:
 	if bool(xp_info.get("leveled", false)):
 		_fx_level_up.rpc(player.peer_id, int(xp_info.level))
 	_roll_loot(mob)
+	var qdrop: Dictionary = QuestEngine.on_mob_killed(player, str(mob.template_id))
+	if bool(qdrop.get("gem", false)):
+		var gem_line := str(qdrop.get("log", "Blue Gemstone obtained."))
+		_push_log(gem_line)
+		_push_log_to.rpc_id(player.peer_id, gem_line)
 	_respawn_timers[mob.mob_id] = MOB_RESPAWN
 	_push_log("%s slew %s (+%d XP)" % [player.display_name, mob.display_name, mob.xp_reward])
 
