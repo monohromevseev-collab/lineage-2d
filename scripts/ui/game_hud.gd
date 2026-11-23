@@ -7,12 +7,15 @@ signal inventory_toggled
 signal map_toggled
 signal equip_item(item_id: String)
 signal pickup_pressed
+signal dialog_choice(choice_id: String)
+signal talk_pressed
 
 const ItemIcons := preload("res://scripts/ui/item_icons.gd")
 const IconSlot := preload("res://scripts/ui/icon_slot.gd")
 const EquipIcon := preload("res://scripts/ui/equip_icon.gd")
 const Items := preload("res://data/items.gd")
 const Combat := preload("res://data/combat.gd")
+const QuestEngine := preload("res://data/quest_engine.gd")
 
 var _root: Control
 var _hp: ProgressBar
@@ -38,6 +41,13 @@ var _fullmap_visible: bool = false
 var _inv_visible: bool = false
 var _skill_attack: Button
 var _help: Label
+var _quest_lbl: Label
+var _dialog_panel: PanelContainer
+var _dialog_title: Label
+var _dialog_body: RichTextLabel
+var _dialog_choices: VBoxContainer
+var _dialog_npc_id: String = ""
+var _adena_lbl: Label
 
 var _player_ref: WeakRef
 var _world_ref: WeakRef
@@ -49,6 +59,7 @@ func _ready() -> void:
 	_build()
 	_inv_panel.visible = false
 	_fullmap.visible = false
+	_dialog_panel.visible = false
 
 
 func bind(world: Node, player: Node) -> void:
@@ -64,13 +75,15 @@ func _build() -> void:
 
 	_build_player_bars()
 	_build_target_frame()
+	_build_quest_tracker()
+	_build_dialog()
 	_build_skill_bar()
 	_build_inventory()
 	_build_minimap()
 	_build_fullmap()
 	_build_log()
 	_help = Label.new()
-	_help.text = "WASD · LMB select · F/1 Attack · Tab target · I inventory · M map · E pickup · Esc clear"
+	_help.text = "WASD · LMB select/NPC talk · F/1 Attack · Tab target · I bag · M map · E pickup · Esc clear"
 	_help.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	_help.offset_top = -28
 	_help.offset_bottom = -6
@@ -180,6 +193,85 @@ func _build_target_frame() -> void:
 	_target_panel.visible = false
 
 
+func _build_quest_tracker() -> void:
+	_quest_lbl = Label.new()
+	_quest_lbl.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	_quest_lbl.position = Vector2(16, 150)
+	_quest_lbl.size = Vector2(360, 48)
+	_quest_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_quest_lbl.add_theme_font_size_override("font_size", 13)
+	_quest_lbl.add_theme_color_override("font_color", Color(0.95, 0.88, 0.55))
+	_quest_lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
+	_quest_lbl.add_theme_constant_override("outline_size", 4)
+	_quest_lbl.text = "Quest: speak with the Newbie Helper"
+	_root.add_child(_quest_lbl)
+	_adena_lbl = Label.new()
+	_adena_lbl.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	_adena_lbl.position = Vector2(16, 198)
+	_adena_lbl.add_theme_font_size_override("font_size", 12)
+	_adena_lbl.add_theme_color_override("font_color", Color(0.95, 0.85, 0.35))
+	_adena_lbl.text = "Adena: 0"
+	_root.add_child(_adena_lbl)
+
+
+func _build_dialog() -> void:
+	_dialog_panel = PanelContainer.new()
+	_dialog_panel.set_anchors_preset(Control.PRESET_CENTER)
+	_dialog_panel.position = Vector2(-220, -40)
+	_dialog_panel.custom_minimum_size = Vector2(440, 220)
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.07, 0.07, 0.1, 0.94)
+	style.border_color = Color(0.75, 0.65, 0.35)
+	style.set_border_width_all(2)
+	style.set_corner_radius_all(6)
+	style.content_margin_left = 14
+	style.content_margin_right = 14
+	style.content_margin_top = 12
+	style.content_margin_bottom = 12
+	_dialog_panel.add_theme_stylebox_override("panel", style)
+	_dialog_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	_root.add_child(_dialog_panel)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 8)
+	_dialog_panel.add_child(v)
+	_dialog_title = Label.new()
+	_dialog_title.add_theme_font_size_override("font_size", 16)
+	_dialog_title.add_theme_color_override("font_color", Color(1.0, 0.9, 0.55))
+	v.add_child(_dialog_title)
+	_dialog_body = RichTextLabel.new()
+	_dialog_body.bbcode_enabled = false
+	_dialog_body.fit_content = true
+	_dialog_body.custom_minimum_size = Vector2(400, 90)
+	_dialog_body.scroll_active = true
+	_dialog_body.add_theme_color_override("default_color", Color(0.92, 0.9, 0.85))
+	v.add_child(_dialog_body)
+	_dialog_choices = VBoxContainer.new()
+	_dialog_choices.add_theme_constant_override("separation", 4)
+	v.add_child(_dialog_choices)
+
+
+func show_dialog(npc_id: String, npc_name: String, dlg: Dictionary) -> void:
+	_dialog_npc_id = npc_id
+	_dialog_title.text = npc_name
+	_dialog_body.text = str(dlg.get("text", "..."))
+	for c in _dialog_choices.get_children():
+		c.queue_free()
+	var choices: Array = dlg.get("choices", [])
+	for ch in choices:
+		var btn := Button.new()
+		btn.text = str(ch.get("label", "..."))
+		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		var cid := str(ch.get("id", "close"))
+		btn.pressed.connect(func (): dialog_choice.emit(cid))
+		_dialog_choices.add_child(btn)
+	_dialog_panel.visible = true
+
+
+func close_dialog() -> void:
+	_dialog_panel.visible = false
+	_dialog_npc_id = ""
+
+
 func _build_skill_bar() -> void:
 	var bar := HBoxContainer.new()
 	bar.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
@@ -202,6 +294,11 @@ func _build_skill_bar() -> void:
 	map_btn.custom_minimum_size = Vector2(56, 48)
 	map_btn.pressed.connect(func (): map_toggled.emit())
 	bar.add_child(map_btn)
+	var talk_btn := Button.new()
+	talk_btn.text = "Talk"
+	talk_btn.custom_minimum_size = Vector2(56, 48)
+	talk_btn.pressed.connect(func (): talk_pressed.emit())
+	bar.add_child(talk_btn)
 
 
 func _skill_button(skill_id: String, hotkey: String, enabled: bool) -> Button:
@@ -371,8 +468,21 @@ func refresh(player: Node, world: Node) -> void:
 		_target_hp.max_value = t.max_hp
 		_target_hp.value = t.hp
 		_target_hp_lbl.text = "%d / %d" % [t.hp, t.max_hp]
+	elif str(player.target_npc_id) != "" and world and world.npcs:
+		var n = world.npcs.get_node_or_null(str(player.target_npc_id))
+		if n:
+			_target_panel.visible = true
+			_target_name.text = n.display_name
+			_target_hp.max_value = 1
+			_target_hp.value = 1
+			_target_hp_lbl.text = "NPC — click again / Talk"
+		else:
+			_target_panel.visible = false
 	else:
 		_target_panel.visible = false
+
+	_quest_lbl.text = "Quest: %s" % QuestEngine.objective_text(player)
+	_adena_lbl.text = "Adena: %d" % int(player.quests.get("adena", 0))
 
 	for slot in _equip_labels.keys():
 		var id: String = str(player.equipped.get(slot, ""))
@@ -400,7 +510,11 @@ func _rebuild_inv_grid() -> void:
 		btn.custom_minimum_size = Vector2(44, 44)
 		btn.kind = "item"
 		btn.icon_id = str(item_id)
-		btn.tooltip_text = Items.display_name(str(item_id))
+		var tip := Items.display_name(str(item_id))
+		var stack_key := "stack_%s" % str(item_id)
+		if p.quests.has(stack_key):
+			tip = "%s x%d" % [tip, int(p.quests[stack_key])]
+		btn.tooltip_text = tip
 		var captured := str(item_id)
 		btn.pressed.connect(func (): equip_item.emit(captured))
 		_inv_grid.add_child(btn)

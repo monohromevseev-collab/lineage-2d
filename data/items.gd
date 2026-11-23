@@ -7,6 +7,7 @@ const SLOT_LEGS := "legs"
 const SLOT_HEAD := "head"
 const SLOT_GLOVES := "gloves"
 const SLOT_FEET := "feet"
+const SLOT_NECK := "neck"
 
 
 static func _reg():
@@ -33,6 +34,7 @@ static var STARTER_LOADOUT: Dictionary:
 			SLOT_HEAD: str(loadout.get("head", "")),
 			SLOT_GLOVES: "",
 			SLOT_FEET: "",
+			SLOT_NECK: "",
 		}
 
 

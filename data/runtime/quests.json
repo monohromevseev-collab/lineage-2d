@@ -1,0 +1,82 @@
+{
+  "255": {
+    "id": 255,
+    "name": "Tutorial",
+    "source": "Q00255_Tutorial (Shagooh L2J HF)",
+    "status": "confirmed_logic_simplified",
+    "notes": [
+      "Human Fighter path only (Newbie Helper 30009 + Roien 30008 + Tutorial Gremlin 18342).",
+      "Full client tutorial UI / radar / voice cues omitted — unconfirmed UX parity.",
+      "Blue Gemstone drop chance uses HF getRandom(2)<=1 (~50%) when quest active.",
+      "Soulshots granted as inventory items; SS damage boost not implemented (unconfirmed gameplay)."
+    ],
+    "start_npc": "30009",
+    "npcs": ["30009", "30008"],
+    "kill_npc": "18342",
+    "items": {
+      "blue_gemstone": "6353",
+      "recommendation": "1067",
+      "soulshot_beginner": "5789",
+      "tutorial_guide": "5588"
+    },
+    "steps": {
+      "not_started": {
+        "objective": "Speak with the Newbie Helper near the talking stone."
+      },
+      "hunt_gremlin": {
+        "objective": "Recover a Blue Gemstone from Tutorial Gremlins."
+      },
+      "return_helper": {
+        "objective": "Return the Blue Gemstone to the Newbie Helper."
+      },
+      "see_roien": {
+        "objective": "Deliver the Recommendation to Grand Master Roien."
+      },
+      "completed": {
+        "objective": "Tutorial complete. Seek Darin for Letters of Love (lv2+)."
+      }
+    },
+    "rewards_helper": {
+      "items": [{"id": "1067", "count": 1}, {"id": "5789", "count": 200}],
+      "status": "confirmed_from_talkCarl"
+    },
+    "rewards_roien": {
+      "items": [{"id": "5789", "count": 200}, {"id": "5588", "count": 1}],
+      "sp": 50,
+      "sp_status": "confirmed_value_unconfirmed_mapping",
+      "sp_note": "HF addExpAndSp(0,50); we grant +50 XP as stand-in (unconfirmed)."
+    }
+  },
+  "1": {
+    "id": 1,
+    "name": "Letters of Love",
+    "source": "Q00001_LettersOfLove (Shagooh L2J HF)",
+    "status": "confirmed",
+    "min_level": 2,
+    "start_npc": "30048",
+    "npcs": ["30048", "30006", "30033"],
+    "items": {
+      "darins_letter": "687",
+      "roxxys_kerchief": "688",
+      "darins_receipt": "1079",
+      "baulros_potion": "1080",
+      "necklace_of_knowledge": "906"
+    },
+    "steps": {
+      "available": {"objective": "Talk to Darin (requires level 2)."},
+      "1": {"objective": "Deliver Darin's Letter to Roxxy."},
+      "2": {"objective": "Return Roxxy's Kerchief to Darin."},
+      "3": {"objective": "Take Darin's Receipt to Magister Baulro."},
+      "4": {"objective": "Bring Baulro's Potion back to Darin."},
+      "completed": {"objective": "Quest finished."}
+    },
+    "rewards": {
+      "items": [{"id": "906", "count": 1}],
+      "exp": 5672,
+      "sp": 446,
+      "adena": 2466,
+      "status": "confirmed_from_onTalk_cond4",
+      "sp_note": "SP bank not simulated; SP value recorded only (unconfirmed mapping)."
+    }
+  }
+}

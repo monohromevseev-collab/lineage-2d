@@ -412,5 +412,184 @@
     },
     "source": "hf_datapack",
     "status": "confirmed"
+  },
+  "5789": {
+    "id": 5789,
+    "name": "Soulshot: No Grade for Beginners",
+    "type": "EtcItem",
+    "bodypart": "",
+    "slot": "etc",
+    "weight": 3,
+    "price": 0,
+    "icon": "",
+    "armor_type": "",
+    "weapon_type": "",
+    "p_atk": 0,
+    "p_def": 0,
+    "visual": {
+      "tier": 0
+    },
+    "source": "hf_datapack",
+    "status": "confirmed",
+    "note": "No SS combat effect yet (unconfirmed gameplay)."
+  },
+  "5588": {
+    "id": 5588,
+    "name": "Tutorial Guide",
+    "type": "EtcItem",
+    "bodypart": "",
+    "slot": "etc",
+    "weight": 10,
+    "price": 0,
+    "icon": "",
+    "armor_type": "",
+    "weapon_type": "",
+    "p_atk": 0,
+    "p_def": 0,
+    "visual": {
+      "tier": 0
+    },
+    "source": "hf_datapack",
+    "status": "confirmed"
+  },
+  "6353": {
+    "id": 6353,
+    "name": "Blue Gemstone",
+    "type": "EtcItem",
+    "bodypart": "",
+    "slot": "etc",
+    "weight": 0,
+    "price": 0,
+    "icon": "",
+    "armor_type": "",
+    "weapon_type": "",
+    "p_atk": 0,
+    "p_def": 0,
+    "visual": {
+      "tier": 0
+    },
+    "source": "hf_datapack",
+    "status": "confirmed",
+    "quest_item": true
+  },
+  "1067": {
+    "id": 1067,
+    "name": "Recommendation",
+    "type": "EtcItem",
+    "bodypart": "",
+    "slot": "etc",
+    "weight": 0,
+    "price": 0,
+    "icon": "",
+    "armor_type": "",
+    "weapon_type": "",
+    "p_atk": 0,
+    "p_def": 0,
+    "visual": {
+      "tier": 0
+    },
+    "source": "hf_datapack",
+    "status": "confirmed",
+    "quest_item": true
+  },
+  "687": {
+    "id": 687,
+    "name": "Darin's Letter",
+    "type": "EtcItem",
+    "bodypart": "",
+    "slot": "etc",
+    "weight": 0,
+    "price": 0,
+    "icon": "",
+    "armor_type": "",
+    "weapon_type": "",
+    "p_atk": 0,
+    "p_def": 0,
+    "visual": {
+      "tier": 0
+    },
+    "source": "hf_datapack",
+    "status": "confirmed",
+    "quest_item": true
+  },
+  "688": {
+    "id": 688,
+    "name": "Roxxy's Kerchief",
+    "type": "EtcItem",
+    "bodypart": "",
+    "slot": "etc",
+    "weight": 0,
+    "price": 0,
+    "icon": "",
+    "armor_type": "",
+    "weapon_type": "",
+    "p_atk": 0,
+    "p_def": 0,
+    "visual": {
+      "tier": 0
+    },
+    "source": "hf_datapack",
+    "status": "confirmed",
+    "quest_item": true
+  },
+  "1079": {
+    "id": 1079,
+    "name": "Darin's Receipt",
+    "type": "EtcItem",
+    "bodypart": "",
+    "slot": "etc",
+    "weight": 0,
+    "price": 0,
+    "icon": "",
+    "armor_type": "",
+    "weapon_type": "",
+    "p_atk": 0,
+    "p_def": 0,
+    "visual": {
+      "tier": 0
+    },
+    "source": "hf_datapack",
+    "status": "confirmed",
+    "quest_item": true
+  },
+  "1080": {
+    "id": 1080,
+    "name": "Baulro's Potion",
+    "type": "EtcItem",
+    "bodypart": "",
+    "slot": "etc",
+    "weight": 0,
+    "price": 0,
+    "icon": "",
+    "armor_type": "",
+    "weapon_type": "",
+    "p_atk": 0,
+    "p_def": 0,
+    "visual": {
+      "tier": 0
+    },
+    "source": "hf_datapack",
+    "status": "confirmed",
+    "quest_item": true
+  },
+  "906": {
+    "id": 906,
+    "name": "Necklace of Knowledge",
+    "type": "Armor",
+    "bodypart": "neck",
+    "slot": "neck",
+    "weight": 150,
+    "price": 830,
+    "icon": "",
+    "armor_type": "",
+    "weapon_type": "",
+    "p_atk": 0,
+    "p_def": 0,
+    "m_def": 18,
+    "visual": {
+      "tier": 1
+    },
+    "source": "hf_datapack",
+    "status": "confirmed"
   }
 }
