@@ -1,5 +1,5 @@
 extends RefCounted
-## Mob templates for Talking Island–like meadow.
+## Mob templates scattered across the expanded Talking Island meadow.
 
 const TEMPLATES := {
 	"keltir": {
@@ -58,15 +58,23 @@ const TEMPLATES := {
 	},
 }
 
-## Spawn layout around the talking stone / meadow.
+## Spread across a large seamless meadow (world coords).
 const SPAWNS := [
-	{"template": "keltir", "pos": Vector2(160, 30)},
-	{"template": "keltir", "pos": Vector2(200, 80)},
-	{"template": "keltir", "pos": Vector2(120, 100)},
-	{"template": "wolf", "pos": Vector2(-180, -40)},
-	{"template": "wolf", "pos": Vector2(-220, 40)},
-	{"template": "orc_grunt", "pos": Vector2(40, -170)},
-	{"template": "orc_grunt", "pos": Vector2(-40, -200)},
+	{"template": "keltir", "pos": Vector2(220, 40)},
+	{"template": "keltir", "pos": Vector2(280, 110)},
+	{"template": "keltir", "pos": Vector2(180, 160)},
+	{"template": "keltir", "pos": Vector2(340, 60)},
+	{"template": "keltir", "pos": Vector2(420, 140)},
+	{"template": "wolf", "pos": Vector2(-320, -80)},
+	{"template": "wolf", "pos": Vector2(-400, 40)},
+	{"template": "wolf", "pos": Vector2(-280, 120)},
+	{"template": "wolf", "pos": Vector2(-480, -40)},
+	{"template": "orc_grunt", "pos": Vector2(80, -320)},
+	{"template": "orc_grunt", "pos": Vector2(-60, -380)},
+	{"template": "orc_grunt", "pos": Vector2(160, -400)},
+	{"template": "keltir", "pos": Vector2(520, -100)},
+	{"template": "wolf", "pos": Vector2(-200, 280)},
+	{"template": "orc_grunt", "pos": Vector2(300, 300)},
 ]
 
 

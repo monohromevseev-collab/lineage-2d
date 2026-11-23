@@ -8,6 +8,9 @@ const Combat := preload("res://data/combat.gd")
 @onready var name_label: Label = $NameLabel
 @onready var hp_bar: Node2D = $HpBar
 
+var _selected: bool = false
+var _select_poly: Polygon2D
+
 var mob_id: int = 0
 var template_id: String = "keltir"
 var display_name: String = "Mob"
@@ -29,6 +32,8 @@ var _attack_cd: float = 0.0
 var _remote_pos: Vector2 = Vector2.ZERO
 var _has_remote: bool = false
 var _hurt_flash: float = 0.0
+var _anim_t: float = 0.0
+var _moving: bool = false
 
 
 func setup(id: int, template: String, pos: Vector2) -> void:
@@ -51,7 +56,27 @@ func setup(id: int, template: String, pos: Vector2) -> void:
 	attack_interval = float(t.get("attack_interval", 1.4))
 	name_label.text = display_name
 	_build_silhouette(str(t.get("silhouette", "fox")), t.get("color", Color.WHITE))
+	_ensure_select_ring()
 	_refresh_hp()
+
+
+func set_selected(on: bool) -> void:
+	_selected = on
+	if _select_poly:
+		_select_poly.visible = on and alive
+
+
+func _ensure_select_ring() -> void:
+	if _select_poly:
+		return
+	_select_poly = Polygon2D.new()
+	_select_poly.z_index = -1
+	_select_poly.color = Color(0.95, 0.55, 0.15, 0.45)
+	_select_poly.polygon = PackedVector2Array([
+		Vector2(0, 12), Vector2(26, 24), Vector2(0, 34), Vector2(-26, 24),
+	])
+	_select_poly.visible = false
+	add_child(_select_poly)
 
 
 func _build_silhouette(kind: String, color: Color) -> void:
@@ -93,11 +118,19 @@ func _build_silhouette(kind: String, color: Color) -> void:
 
 
 func _process(delta: float) -> void:
+	_anim_t += delta * (8.0 if _moving else 2.0)
+	var bob := sin(_anim_t) * (2.5 if _moving else 0.8)
+	visual.position.y = bob
+	visual.rotation = sin(_anim_t) * (0.12 if _moving else 0.03)
 	if _hurt_flash > 0.0:
 		_hurt_flash = maxf(0.0, _hurt_flash - delta * 4.0)
 		visual.modulate = Color(1, 1, 1).lerp(Color(1.4, 0.5, 0.5), _hurt_flash)
+	elif alive:
+		visual.modulate = Color(1, 1, 1)
 	if not multiplayer.is_server() and _has_remote and alive:
+		var prev := position
 		position = position.lerp(_remote_pos, clampf(10.0 * delta, 0.0, 1.0))
+		_moving = prev.distance_to(position) > 0.35
 
 
 func server_ai(delta: float, players_node: Node2D, on_hit_player: Callable) -> void:
@@ -137,15 +170,22 @@ func server_ai(delta: float, players_node: Node2D, on_hit_player: Callable) -> v
 	if dist > attack_range * 0.9:
 		var dir: Vector2 = (target_node.position - position).normalized()
 		position += dir * move_speed * delta
+		_moving = true
 	elif _attack_cd <= 0.0:
+		_moving = false
 		_attack_cd = attack_interval
 		var dmg := Combat.phys_damage(float(p_atk), float(target_node.stats.get("p_def", 5)), 1)
 		on_hit_player.call(_target_peer, dmg, mob_id)
+	else:
+		_moving = false
 
 
 func _return_home(delta: float) -> void:
 	if position.distance_to(_home) > 4.0:
 		position = position.move_toward(_home, move_speed * 0.7 * delta)
+		_moving = true
+	else:
+		_moving = false
 
 
 func apply_damage(amount: int, attacker_peer: int) -> void:

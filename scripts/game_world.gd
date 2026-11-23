@@ -1,31 +1,28 @@
 extends Node2D
-## Slice 1 world: Human spawn at talking stone, mobs, AA combat, XP, loot, equip.
+## Slice 2: L2-feel HUD, target combat, seamless meadow, minimap, walk anims.
 
 const PLAYER_SCENE := preload("res://scenes/player.tscn")
 const MOB_SCENE := preload("res://scenes/mob.tscn")
 const LOOT_SCENE := preload("res://scenes/loot_drop.tscn")
+const HUD_SCRIPT := preload("res://scripts/ui/game_hud.gd")
 const NetConfig := preload("res://scripts/net_config.gd")
 const MobData := preload("res://data/mobs.gd")
 const Items := preload("res://data/items.gd")
 const Combat := preload("res://data/combat.gd")
+
 const SYNC_HZ := 20.0
-const ATTACK_RANGE := 52.0
-const PICKUP_RANGE := 48.0
-const MOB_RESPAWN := 12.0
+const ATTACK_RANGE := 56.0
+const PICKUP_RANGE := 52.0
+const MOB_RESPAWN := 14.0
+const CLICK_SELECT_RADIUS := 36.0
 
 @export var net_cfg: Dictionary = {}
 
 @onready var players: Node2D = $Players
 @onready var mobs: Node2D = $Mobs
 @onready var loot: Node2D = $Loot
-@onready var hud: CanvasLayer = $HUD
-@onready var status_label: Label = $HUD/Status
-@onready var help_label: Label = $HUD/Help
-@onready var title_label: Label = $HUD/Title
-@onready var stats_label: Label = $HUD/StatsPanel
-@onready var inv_label: Label = $HUD/InvPanel
-@onready var target_label: Label = $HUD/TargetPanel
-@onready var log_label: Label = $HUD/CombatLog
+
+var game_hud: CanvasLayer
 
 var _peer: ENetMultiplayerPeer
 var _spawn_index: int = 0
@@ -33,18 +30,13 @@ var _pending_names: Dictionary = {}
 var _sync_accum: float = 0.0
 var _next_mob_id: int = 1
 var _next_drop_id: int = 1
-var _respawn_timers: Dictionary = {}  # mob_id -> time left
+var _respawn_timers: Dictionary = {}
 var _combat_log: PackedStringArray = PackedStringArray()
 
-const ZONE_HALF := Vector2(460, 300)
-## Human newbie meadow — near talking stone.
+const WORLD_HALF := Vector2(1400, 1000)
 const HUMAN_SPAWN := Vector2(-40, 70)
 const SPAWN_JITTER := [
-	Vector2(0, 0),
-	Vector2(36, 12),
-	Vector2(-30, 18),
-	Vector2(20, -16),
-	Vector2(-45, -8),
+	Vector2(0, 0), Vector2(36, 12), Vector2(-30, 18), Vector2(20, -16), Vector2(-45, -8),
 ]
 
 
@@ -58,18 +50,26 @@ func _ready() -> void:
 	multiplayer.connection_failed.connect(_on_connection_failed)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
 
-	title_label.text = "Lineage 2d · Slice 1"
-	help_label.text = "WASD move · F / LMB attack (auto) · E pickup · R equip best · Tab cycle target"
+	_setup_hud()
 	_start_network()
-	if multiplayer.is_server() or net_cfg.mode == "server":
-		# Mobs created after peer assigned in _start_network.
-		pass
+
+
+func _setup_hud() -> void:
+	# Remove legacy label HUD if present
+	if has_node("HUD"):
+		$HUD.queue_free()
+	game_hud = HUD_SCRIPT.new()
+	game_hud.name = "GameHUD"
+	add_child(game_hud)
+	game_hud.attack_pressed.connect(_on_hud_attack)
+	game_hud.inventory_toggled.connect(_on_hud_inv)
+	game_hud.map_toggled.connect(_on_hud_map)
+	game_hud.equip_item.connect(_on_hud_equip)
 
 
 func _physics_process(delta: float) -> void:
 	if not multiplayer.has_multiplayer_peer():
 		return
-
 	if multiplayer.is_server():
 		_server_simulate(delta)
 		_sync_accum += delta
@@ -82,17 +82,83 @@ func _physics_process(delta: float) -> void:
 	var me := players.get_node_or_null(str(my_id))
 	if me == null:
 		return
-	_client_handle_targeting(me)
+	_client_world_input(me)
 	var pkt: Dictionary = me.poll_input(delta)
-	_submit_input.rpc_id(
-		1,
-		pkt.dir,
-		bool(pkt.attack),
-		bool(pkt.pickup),
-		str(pkt.equip_slot)
-	)
+	_submit_input.rpc_id(1, pkt)
 	me.predict_local(pkt.dir, delta)
-	_refresh_local_hud(me)
+	game_hud.bind(self, me)
+	game_hud.refresh(me, self)
+	for m in mobs.get_children():
+		if m.has_method("set_selected"):
+			m.set_selected(m.mob_id == me.target_mob_id)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if multiplayer.is_server() or not multiplayer.has_multiplayer_peer():
+		return
+	var me := players.get_node_or_null(str(multiplayer.get_unique_id()))
+	if me == null:
+		return
+	if event.is_action_pressed("toggle_inventory"):
+		game_hud.toggle_inventory()
+		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("toggle_map"):
+		game_hud.toggle_map()
+		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("cycle_target"):
+		_cycle_target(me)
+		get_viewport().set_input_as_handled()
+	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		if _client_click_select(me, event.position):
+			get_viewport().set_input_as_handled()
+
+
+func _client_world_input(me: Node) -> void:
+	pass
+
+
+func _client_click_select(me: Node, screen_pos: Vector2) -> bool:
+	var canvas := get_viewport().get_canvas_transform()
+	var world_pos: Vector2 = canvas.affine_inverse() * screen_pos
+	# Prefer mobs under cursor
+	var best: Node = null
+	var best_d := CLICK_SELECT_RADIUS
+	for m in mobs.get_children():
+		if not m.alive:
+			continue
+		var d: float = world_pos.distance_to(m.position)
+		if d < best_d:
+			best_d = d
+			best = m
+	if best:
+		me.target_mob_id = best.mob_id
+		me.engaged = false
+		_request_target.rpc_id(1, best.mob_id, false)
+		return true
+	# Click empty — clear target
+	me.target_mob_id = 0
+	me.engaged = false
+	_request_target.rpc_id(1, 0, false)
+	return true
+
+
+func _on_hud_attack() -> void:
+	var me := players.get_node_or_null(str(multiplayer.get_unique_id()))
+	if me == null:
+		return
+	_request_attack.rpc_id(1)
+
+
+func _on_hud_inv() -> void:
+	game_hud.toggle_inventory()
+
+
+func _on_hud_map() -> void:
+	game_hud.toggle_map()
+
+
+func _on_hud_equip(item_id: String) -> void:
+	_request_equip_item.rpc_id(1, item_id)
 
 
 func _server_simulate(delta: float) -> void:
@@ -100,7 +166,6 @@ func _server_simulate(delta: float) -> void:
 		child.server_tick(delta, self)
 	for m in mobs.get_children():
 		m.server_ai(delta, players, Callable(self, "_on_mob_hit_player"))
-	# Respawn timers
 	var done: Array = []
 	for mid in _respawn_timers.keys():
 		_respawn_timers[mid] = float(_respawn_timers[mid]) - delta
@@ -116,19 +181,19 @@ func _start_network() -> void:
 	if net_cfg.mode == "server":
 		var err := _peer.create_server(int(net_cfg.port), NetConfig.MAX_CLIENTS)
 		if err != OK:
-			_set_status("Server failed to bind port %s (err %s)" % [net_cfg.port, err])
+			push_error("Server bind failed")
 			return
 		multiplayer.multiplayer_peer = _peer
-		_set_status("Dedicated server listening on :%s" % net_cfg.port)
 		_spawn_all_mobs()
+		print("[status] Dedicated server listening on :%s" % net_cfg.port)
 		print("[net] server ready, waiting for clients")
 	else:
 		var err := _peer.create_client(str(net_cfg.host), int(net_cfg.port))
 		if err != OK:
-			_set_status("Client create failed (err %s)" % err)
+			push_error("Client create failed")
 			return
 		multiplayer.multiplayer_peer = _peer
-		_set_status("Connecting to %s:%s …" % [net_cfg.host, net_cfg.port])
+		print("[status] Connecting to %s:%s …" % [net_cfg.host, net_cfg.port])
 
 
 func _spawn_all_mobs() -> void:
@@ -150,7 +215,6 @@ func _on_peer_connected(id: int) -> void:
 	print("[net] peer connected: %s" % id)
 	if not multiplayer.is_server():
 		return
-	# Sync existing world to late joiner.
 	for child in players.get_children():
 		var pid := int(str(child.name))
 		_spawn_player.rpc_id(id, pid, child.position, child.display_name, child.snapshot())
@@ -173,7 +237,7 @@ func _on_peer_disconnected(id: int) -> void:
 
 
 func _on_connected_to_server() -> void:
-	_set_status("Connected — Human Fighter @ Talking Stone")
+	print("[status] Connected — Human Fighter @ Talking Stone")
 	var preferred: String = str(net_cfg.get("display_name", ""))
 	if preferred == "":
 		preferred = "Player-%s" % multiplayer.get_unique_id()
@@ -181,11 +245,11 @@ func _on_connected_to_server() -> void:
 
 
 func _on_connection_failed() -> void:
-	_set_status("Connection failed — is the server running?")
+	print("[status] Connection failed")
 
 
 func _on_server_disconnected() -> void:
-	_set_status("Server disconnected")
+	print("[status] Server disconnected")
 	for n in [players, mobs, loot]:
 		for child in n.get_children():
 			child.queue_free()
@@ -218,7 +282,7 @@ func _spawn_player(peer_id: int, pos: Vector2, display_name: String, state: Dict
 	p.name = str(peer_id)
 	p.position = pos
 	players.add_child(p, true)
-	p.setup(peer_id, display_name, ZONE_HALF)
+	p.setup(peer_id, display_name, WORLD_HALF)
 	if not state.is_empty():
 		p.apply_full_state(state)
 	if typeof(net_cfg) == TYPE_DICTIONARY and bool(net_cfg.get("bot", false)) \
@@ -273,13 +337,61 @@ func _remove_loot(drop_id: int) -> void:
 
 
 @rpc("any_peer", "unreliable")
-func _submit_input(dir: Vector2, attack: bool, pickup: bool, equip_slot: String) -> void:
+func _submit_input(pkt: Dictionary) -> void:
 	if not multiplayer.is_server():
 		return
 	var sender := multiplayer.get_remote_sender_id()
 	var node := players.get_node_or_null(str(sender))
 	if node:
-		node.receive_input_packet(dir, attack, pickup, equip_slot)
+		node.receive_input_packet(pkt)
+
+
+@rpc("any_peer", "reliable")
+func _request_target(mob_id: int, engage: bool) -> void:
+	if not multiplayer.is_server():
+		return
+	var sender := multiplayer.get_remote_sender_id()
+	var p := players.get_node_or_null(str(sender))
+	if p == null:
+		return
+	p.target_mob_id = mob_id
+	if mob_id == 0:
+		p.engaged = false
+	elif engage:
+		p.engaged = true
+	else:
+		p.engaged = false
+
+
+@rpc("any_peer", "reliable")
+func _request_attack() -> void:
+	if not multiplayer.is_server():
+		return
+	var sender := multiplayer.get_remote_sender_id()
+	var p := players.get_node_or_null(str(sender))
+	if p == null or not p.alive:
+		return
+	if p.target_mob_id == 0:
+		var n := _nearest_alive_mob(p.position)
+		if n:
+			p.target_mob_id = n.mob_id
+	if p.target_mob_id == 0:
+		_push_log("%s has no target" % p.display_name)
+		return
+	if not p.engaged:
+		p.engaged = true
+		_push_log("%s engages %s" % [p.display_name, _mob_name(p.target_mob_id)])
+	# Already engaged: keep attacking current target (Esc clears)
+
+
+@rpc("any_peer", "reliable")
+func _request_equip_item(item_id: String) -> void:
+	if not multiplayer.is_server():
+		return
+	var sender := multiplayer.get_remote_sender_id()
+	var p := players.get_node_or_null(str(sender))
+	if p:
+		p._server_equip_item_id(item_id)
 
 
 @rpc("authority", "unreliable", "call_remote")
@@ -300,8 +412,8 @@ func _sync_snapshot(player_states: Dictionary, mob_states: Dictionary) -> void:
 		var ms: Dictionary = mob_states[mid]
 		m.apply_state(ms.get("pos", m.position), int(ms.get("hp", m.hp)), bool(ms.get("alive", true)))
 	var me := players.get_node_or_null(str(multiplayer.get_unique_id()))
-	if me:
-		_refresh_local_hud(me)
+	if me and game_hud:
+		game_hud.refresh(me, self)
 
 
 @rpc("authority", "call_local", "reliable")
@@ -309,7 +421,7 @@ func _fx_miss(peer_id: int, mob_id: int) -> void:
 	var p := players.get_node_or_null(str(peer_id))
 	if p and p.has_method("play_attack_fx"):
 		p.play_attack_fx()
-	_push_log("%s missed mob #%s" % [_name_of(peer_id), mob_id])
+	_push_log("%s missed %s" % [_name_of(peer_id), _mob_name(mob_id)])
 
 
 @rpc("authority", "call_local", "reliable")
@@ -361,43 +473,35 @@ func _broadcast_snapshots() -> void:
 	_sync_snapshot.rpc(pst, mst)
 
 
-func server_player_auto_attack(player: Node, _delta: float) -> void:
-	if not player.alive:
+func server_player_swing(player: Node, _delta: float) -> void:
+	if not player.alive or not player.engaged:
 		return
-	# Acquire / keep target
 	var target := _find_mob(player.target_mob_id)
 	if target == null or not target.alive:
-		target = _nearest_alive_mob(player.position)
-		player.target_mob_id = target.mob_id if target else 0
-	if target == null:
+		player.engaged = false
+		player.target_mob_id = 0
 		return
-	var dist: float = player.position.distance_to(target.position)
-	if dist > ATTACK_RANGE:
+	var check: Dictionary = Combat.can_melee(player.position, player.facing, target.position, ATTACK_RANGE)
+	if not bool(check.get("ok", false)):
+		# Stay engaged but don't swing — player must close distance / face
 		return
 	if player._attack_cd > 0.0:
 		return
 	player._attack_cd = float(player.stats.get("atk_interval", 1.0))
-	var chance := Combat.hit_chance(
-		float(player.stats.get("accuracy", 30)),
-		10.0,
-		player.level,
-		1
-	)
+	# Face toward target on swing
+	player.facing = (target.position - player.position).normalized()
+	var chance := Combat.hit_chance(float(player.stats.get("accuracy", 30)), 10.0, player.level, 1)
 	if randf() > chance:
 		_fx_miss.rpc(player.peer_id, target.mob_id)
 		return
-	var dmg := Combat.phys_damage(
-		float(player.stats.get("p_atk", 10)),
-		float(target.p_def),
-		player.level
-	)
-	# Crit sprinkle
+	var dmg := Combat.phys_damage(float(player.stats.get("p_atk", 10)), float(target.p_def), player.level)
 	if randf() < 0.08 + float(player.stats.get("dex", 30)) * 0.001:
 		dmg *= 2
 	target.apply_damage(dmg, player.peer_id)
 	_fx_attack.rpc(player.peer_id, target.mob_id, dmg, target.hp)
 	if not target.alive:
 		_on_mob_killed(player, target)
+		player.engaged = false
 
 
 func _on_mob_killed(player: Node, mob: Node) -> void:
@@ -411,8 +515,7 @@ func _on_mob_killed(player: Node, mob: Node) -> void:
 
 func _roll_loot(mob: Node) -> void:
 	var t: Dictionary = MobData.get_template(mob.template_id)
-	var table: Array = t.get("loot", [])
-	for entry in table:
+	for entry in t.get("loot", []):
 		if randf() > float(entry.get("chance", 0.0)):
 			continue
 		var item_id: String = str(entry.get("item_id", ""))
@@ -420,8 +523,7 @@ func _roll_loot(mob: Node) -> void:
 			continue
 		var drop_id := _next_drop_id
 		_next_drop_id += 1
-		var jitter := Vector2(randf_range(-18, 18), randf_range(-12, 12))
-		var pos: Vector2 = mob.position + jitter
+		var pos: Vector2 = mob.position + Vector2(randf_range(-18, 18), randf_range(-12, 12))
 		_spawn_loot.rpc(drop_id, item_id, pos)
 
 
@@ -484,29 +586,6 @@ func _nearest_alive_mob(from: Vector2) -> Node:
 	return best
 
 
-func _client_handle_targeting(me: Node) -> void:
-	if Input.is_action_just_pressed("cycle_target"):
-		_cycle_target(me)
-	if Input.is_action_just_pressed("attack_click"):
-		# Nearest in a cone / simply nearest.
-		var n := _nearest_alive_mob(me.position)
-		if n:
-			me.target_mob_id = n.mob_id
-			me.auto_attack = true
-			_request_target.rpc_id(1, n.mob_id)
-
-
-@rpc("any_peer", "reliable")
-func _request_target(mob_id: int) -> void:
-	if not multiplayer.is_server():
-		return
-	var sender := multiplayer.get_remote_sender_id()
-	var p := players.get_node_or_null(str(sender))
-	if p:
-		p.target_mob_id = mob_id
-		p.auto_attack = true
-
-
 func _cycle_target(me: Node) -> void:
 	var alive_mobs: Array = []
 	for m in mobs.get_children():
@@ -514,6 +593,8 @@ func _cycle_target(me: Node) -> void:
 			alive_mobs.append(m)
 	if alive_mobs.is_empty():
 		me.target_mob_id = 0
+		me.engaged = false
+		_request_target.rpc_id(1, 0, false)
 		return
 	alive_mobs.sort_custom(func(a, b): return a.mob_id < b.mob_id)
 	var idx := 0
@@ -522,8 +603,8 @@ func _cycle_target(me: Node) -> void:
 			idx = (i + 1) % alive_mobs.size()
 			break
 	me.target_mob_id = alive_mobs[idx].mob_id
-	me.auto_attack = true
-	_request_target.rpc_id(1, me.target_mob_id)
+	me.engaged = false
+	_request_target.rpc_id(1, me.target_mob_id, false)
 
 
 func _next_spawn() -> Vector2:
@@ -532,42 +613,13 @@ func _next_spawn() -> Vector2:
 	return HUMAN_SPAWN + jitter
 
 
-func _refresh_local_hud(me: Node) -> void:
-	var st: Dictionary = me.stats
-	stats_label.text = "Human Fighter  Lv%d\nHP %d/%d   XP %d/%d\nP.Atk %d   P.Def %d\nWeapon+%d  Armor+%d" % [
-		me.level,
-		me.hp, int(st.get("max_hp", 0)),
-		me.xp, Combat.xp_to_next(me.level),
-		int(st.get("p_atk", 0)), int(st.get("p_def", 0)),
-		int(st.get("weapon_patk", 0)), int(st.get("armor_pdef", 0)),
-	]
-	var eq_lines: PackedStringArray = PackedStringArray()
-	eq_lines.append("Equipped:")
-	for slot in [Items.SLOT_WEAPON, Items.SLOT_HEAD, Items.SLOT_CHEST, Items.SLOT_LEGS]:
-		var id: String = str(me.equipped.get(slot, ""))
-		eq_lines.append("  %s: %s" % [slot, Items.display_name(id) if id != "" else "—"])
-	eq_lines.append("Bag:")
-	if me.inventory.is_empty():
-		eq_lines.append("  (empty — press E near glow)")
-	else:
-		for id2 in me.inventory:
-			eq_lines.append("  • %s" % Items.display_name(str(id2)))
-	inv_label.text = "\n".join(eq_lines)
-
-	var t := _find_mob(me.target_mob_id)
-	if t and t.alive:
-		target_label.text = "Target: %s\nHP %d/%d" % [t.display_name, t.hp, t.max_hp]
-	else:
-		target_label.text = "Target: none\n(Tab / F to engage)"
-
-
 func _push_log(line: String) -> void:
 	_combat_log.append(line)
-	while _combat_log.size() > 6:
+	while _combat_log.size() > 8:
 		_combat_log.remove_at(0)
-	if log_label:
-		log_label.text = "\n".join(_combat_log)
 	print("[combat] %s" % line)
+	if game_hud and is_instance_valid(game_hud):
+		game_hud.push_log(line)
 
 
 func _name_of(peer_id: int) -> String:
@@ -582,8 +634,3 @@ func _mob_name(mob_id: int) -> String:
 	if m:
 		return m.display_name
 	return "mob #%s" % mob_id
-
-
-func _set_status(text: String) -> void:
-	status_label.text = text
-	print("[status] %s" % text)
