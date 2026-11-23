@@ -709,7 +709,7 @@ func server_try_pickup(peer_id: int) -> void:
 		return
 	var amt: int = int(best.count) if "count" in best else 1
 	player.add_loot_item(best.item_id, amt)
-	var fx_name := best.item_id
+	var fx_name: String = str(best.item_id)
 	if best.item_id == "57":
 		fx_name = "Adena ×%d" % amt
 	_fx_loot.rpc(peer_id, fx_name)
